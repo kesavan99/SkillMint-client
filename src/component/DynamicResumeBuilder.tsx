@@ -51,7 +51,7 @@ const DynamicResumeBuilder: React.FC = () => {
           
           <div className="mt-8 text-center">
             <button
-              onClick={() => navigate('/home')}
+              onClick={() => navigate('/')}
               className="px-6 py-3 text-white transition-all duration-300 bg-purple-600 rounded-lg hover:bg-purple-700"
             >
               Back to Home

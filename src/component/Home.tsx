@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import { useAuth } from '../service/authService';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth();
 
   // Clear resume data when returning to home
   useEffect(() => {
@@ -16,7 +18,52 @@ const Home: React.FC = () => {
       <Navbar />
 
       <main className="px-5 py-16 mx-auto max-w-7xl">
-        <div className="grid max-w-6xl grid-cols-1 gap-8 mx-auto md:grid-cols-2 lg:grid-cols-4">
+        {!isAuthenticated ? (
+          /* Hero Section for Non-Authenticated Users */
+          <div className="max-w-4xl mx-auto text-center">
+            <h1 className="mb-6 text-4xl font-bold text-gray-900 md:text-5xl lg:text-6xl">
+              Build Your Professional Resume
+            </h1>
+            <p className="mb-8 text-lg text-gray-700 md:text-xl">
+              Create stunning resumes with AI-powered tools, multiple templates, and intelligent job search integration.
+            </p>
+            <div className="flex flex-col justify-center gap-4 sm:flex-row">
+              <button
+                onClick={() => navigate('/login')}
+                className="px-8 py-3 text-lg font-semibold text-white transition-all duration-300 rounded-lg shadow-lg bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 hover:shadow-xl"
+              >
+                Get Started Free
+              </button>
+              <button
+                onClick={() => navigate('/about')}
+                className="px-8 py-3 text-lg font-semibold text-gray-700 transition-all duration-300 bg-white border-2 border-gray-300 rounded-lg shadow-lg hover:border-gray-400 hover:shadow-xl"
+              >
+                Learn More
+              </button>
+            </div>
+
+            {/* Features Grid for Public */}
+            <div className="grid grid-cols-1 gap-8 mt-16 md:grid-cols-3">
+              <div className="p-6 bg-white shadow-lg rounded-xl">
+                <div className="mb-4 text-4xl">📄</div>
+                <h3 className="mb-2 text-xl font-semibold text-gray-800">Professional Templates</h3>
+                <p className="text-gray-600">Choose from multiple ATS-optimized resume templates</p>
+              </div>
+              <div className="p-6 bg-white shadow-lg rounded-xl">
+                <div className="mb-4 text-4xl">🤖</div>
+                <h3 className="mb-2 text-xl font-semibold text-gray-800">AI-Powered Builder</h3>
+                <p className="text-gray-600">Smart suggestions and content optimization</p>
+              </div>
+              <div className="p-6 bg-white shadow-lg rounded-xl">
+                <div className="mb-4 text-4xl">💼</div>
+                <h3 className="mb-2 text-xl font-semibold text-gray-800">Job Search Integration</h3>
+                <p className="text-gray-600">Find opportunities across top job platforms</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Feature Cards for Authenticated Users */
+          <div className="grid max-w-6xl grid-cols-1 gap-8 mx-auto md:grid-cols-2 lg:grid-cols-4">
           <div 
             className="p-8 transition-all duration-300 bg-white border border-transparent cursor-pointer rounded-2xl hover:shadow-2xl hover:-translate-y-2 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50"
             onClick={() => navigate('/profile')}
@@ -111,6 +158,7 @@ const Home: React.FC = () => {
             </p>
           </div>
         </div>
+        )}
 
         {/* Footer */}
         <footer className="pt-10 pb-6 mt-20 border-t border-white/20">

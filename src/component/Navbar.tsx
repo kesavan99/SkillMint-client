@@ -4,7 +4,7 @@ import { useAuth } from "../service/authService";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
   };
 
   const handleLogoClick = () => {
-    navigate('/home');
+    navigate('/');
   };
 
   const handleNavClick = (path: string) => {
@@ -43,35 +43,39 @@ const Navbar: React.FC = () => {
         {/* Desktop Navigation Links */}
         <nav className="items-center hidden gap-6 ml-auto md:flex">
           <button 
-            onClick={() => navigate('/home')}
+            onClick={() => navigate('/')}
             className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
           >
             Home
           </button>
-          <button 
-            onClick={() => navigate('/resume-builder')}
-            className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
-          >
-            Resume
-          </button>
-          <button 
-            onClick={() => navigate('/dynamic-resume-builder')}
-            className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
-          >
-            Dynamic Resume
-          </button>
-          <button 
-            onClick={() => navigate('/profile')}
-            className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
-          >
-            Profile
-          </button>
-          <button 
-            onClick={() => navigate('/job-search')}
-            className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
-          >
-            Job Search
-          </button>
+          {isAuthenticated && (
+            <>
+              <button 
+                onClick={() => navigate('/resume-builder')}
+                className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+              >
+                Resume
+              </button>
+              <button 
+                onClick={() => navigate('/dynamic-resume-builder')}
+                className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+              >
+                Dynamic Resume
+              </button>
+              <button 
+                onClick={() => navigate('/profile')}
+                className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+              >
+                Profile
+              </button>
+              <button 
+                onClick={() => navigate('/job-search')}
+                className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+              >
+                Job Search
+              </button>
+            </>
+          )}
           <button 
             onClick={() => navigate('/about')}
             className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
@@ -84,12 +88,21 @@ const Navbar: React.FC = () => {
           >
             Contact
           </button>
-          <button 
-            onClick={handleLogout} 
-            className="btn btn-primary"
-          >
-            Logout
-          </button>
+          {isAuthenticated ? (
+            <button 
+              onClick={handleLogout} 
+              className="btn btn-primary"
+            >
+              Logout
+            </button>
+          ) : (
+            <button 
+              onClick={() => navigate('/login')} 
+              className="btn btn-primary"
+            >
+              Login
+            </button>
+          )}
         </nav>
 
         {/* Mobile Hamburger Button */}
@@ -115,35 +128,39 @@ const Navbar: React.FC = () => {
         <div className="border-t border-gray-200 md:hidden">
           <nav className="flex flex-col px-5 py-3 space-y-2">
             <button
-              onClick={() => handleNavClick('/home')}
+              onClick={() => handleNavClick('/')}
               className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
             >
               Home
             </button>
-            <button
-              onClick={() => handleNavClick('/resume-builder')}
-              className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
-            >
-              Resume
-            </button>
-            <button
-              onClick={() => handleNavClick('/dynamic-resume-builder')}
-              className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
-            >
-              Dynamic Resume
-            </button>
-            <button
-              onClick={() => handleNavClick('/profile')}
-              className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
-            >
-              Profile
-            </button>
-            <button
-              onClick={() => handleNavClick('/job-search')}
-              className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
-            >
-              Job Search
-            </button>
+            {isAuthenticated && (
+              <>
+                <button
+                  onClick={() => handleNavClick('/resume-builder')}
+                  className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
+                >
+                  Resume
+                </button>
+                <button
+                  onClick={() => handleNavClick('/dynamic-resume-builder')}
+                  className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
+                >
+                  Dynamic Resume
+                </button>
+                <button
+                  onClick={() => handleNavClick('/profile')}
+                  className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
+                >
+                  Profile
+                </button>
+                <button
+                  onClick={() => handleNavClick('/job-search')}
+                  className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
+                >
+                  Job Search
+                </button>
+              </>
+            )}
             <button
               onClick={() => handleNavClick('/about')}
               className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
@@ -156,12 +173,21 @@ const Navbar: React.FC = () => {
             >
               Contact
             </button>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-3 text-base font-medium text-left text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700"
-            >
-              Logout
-            </button>
+            {isAuthenticated ? (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-3 text-base font-medium text-left text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700"
+              >
+                Logout
+              </button>
+            ) : (
+              <button
+                onClick={() => handleNavClick('/login')}
+                className="px-4 py-3 text-base font-medium text-left text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700"
+              >
+                Login
+              </button>
+            )}
           </nav>
         </div>
       )}

@@ -68,7 +68,7 @@ const Login = () => {
           // Existing user - store data and redirect to home with full page reload
           localStorage.setItem('userEmail', user.email || '');
           localStorage.setItem('userName', user.displayName || '');
-          window.location.href = '/home';
+          window.location.href = '/';
         }
       } else {
         setError(data.message || 'Google sign-in failed. Please try again.');
@@ -210,7 +210,7 @@ const Login = () => {
         const success = await login(email, password);
 
         if (success) {
-          navigate('/home');
+          navigate('/');
         } else {
           setError('Login failed. Please check your credentials.');
         }

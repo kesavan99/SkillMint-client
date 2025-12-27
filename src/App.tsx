@@ -30,11 +30,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
   return isAuthenticated ? children : <Navigate to="/login" replace />;
 };
 
-// Auth Route wrapper (redirects to home if already logged in)
+// Auth Route wrapper (redirects to / if already logged in)
 const AuthRoute = ({ children }: { children: React.ReactElement }) => {
   const { isAuthenticated, isLoading } = useAuth();
   if (isLoading) return null;
-  return isAuthenticated ? <Navigate to="/home" replace /> : children;
+  return isAuthenticated ? <Navigate to="/" replace /> : children;
 };
 
 function App() {
@@ -47,14 +47,13 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<AuthRoute><Login /></AuthRoute>} />
         <Route path="/login/token" element={<EmailConfirmation />} />
         <Route path="/email-verification" element={<EmailVerification />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/set-password" element={<SetPassword />} />
         <Route path="/google-set-password" element={<GooglePasswordSetup />} />
-        <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/admin-home" element={<ProtectedRoute><AdminHome /></ProtectedRoute>} />
         <Route path="/resume-builder" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />

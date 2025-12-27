@@ -70,7 +70,7 @@ const GooglePasswordSetup: React.FC = () => {
         
         // Backend has set the auth cookie, redirect to home with page reload
         // This ensures the auth state is properly refreshed
-        window.location.href = '/home';
+        window.location.href = '/';
       } else {
         setError(data.message || 'Failed to set password. Please try again.');
       }
