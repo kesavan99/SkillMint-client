@@ -1,0 +1,88 @@
+# Netlify Build Configuration
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# Image CDN Configuration
+[images]
+  # No remote images needed currently as all images are local
+  # Add remote image domains here if needed in the future
+  # remote_images = ["https://example.com/.*"]
+
+# Image Transformation Redirects
+# Optimize all images with default settings (auto format selection, quality 75)
+[[redirects]]
+  from = "/images/optimized/*"
+  to = "/.netlify/images?url=/:splat"
+  status = 200
+
+# Small thumbnails (50x50) for previews
+[[redirects]]
+  from = "/images/thumbnail/*"
+  to = "/.netlify/images?url=/:splat&w=50&h=50&fit=cover"
+  status = 200
+
+# Medium size images (400px wide) for cards
+[[redirects]]
+  from = "/images/medium/*"
+  to = "/.netlify/images?url=/:splat&w=400&fit=contain"
+  status = 200
+
+# Large size images (800px wide) for full previews
+[[redirects]]
+  from = "/images/large/*"
+  to = "/.netlify/images?url=/:splat&w=800&fit=contain"
+  status = 200
+
+# Logo optimization (maintain aspect ratio)
+[[redirects]]
+  from = "/images/logo/*"
+  to = "/.netlify/images?url=/:splat&h=48&fit=contain"
+  status = 200
+
+# Resume template previews (optimized quality)
+[[redirects]]
+  from = "/images/resume/*"
+  to = "/.netlify/images?url=/:splat&w=600&q=85&fit=contain"
+  status = 200
+
+# Custom Headers for Images
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.jpeg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.webp"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Security Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# SPA redirect - must be last
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../service/authService";
+import OptimizedImage from './OptimizedImage';
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
@@ -32,9 +33,11 @@ const Navbar: React.FC = () => {
           className="flex items-center gap-3 cursor-pointer" 
           onClick={handleLogoClick}
         >
-          <img 
+          <OptimizedImage
             src="/logo.png" 
             alt="SkillMint Logo" 
+            height={48}
+            fit="contain"
             className="h-10 transition-transform hover:scale-105" 
             style={{ width: 'auto' }} 
           />

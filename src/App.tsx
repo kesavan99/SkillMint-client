@@ -6,7 +6,8 @@ import Profile from './component/Profile';
 import AdminHome from './component/AdminHome';
 import ResumeBuilder from './component/ResumeBuilder';
 import DynamicResumeBuilder from './component/DynamicResumeBuilder';
-import DynamicResumeEditor from './component/DynamicResumeEditor';
+import DynamicResumeEditor from './component/dynamicResume/DynamicResumeEditor';
+import TwoSideResume from './component/dynamicResume/TwoSideResume';
 import ResumePreview from './component/ResumePreview';
 import ResumeView from './component/ResumeView';
 import EmailVerification from './component/EmailVerification';
@@ -59,6 +60,7 @@ function App() {
         <Route path="/resume-builder" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
         <Route path="/dynamic-resume-builder" element={<ProtectedRoute><DynamicResumeBuilder /></ProtectedRoute>} />
         <Route path="/dynamic-resume-editor" element={<ProtectedRoute><DynamicResumeEditor /></ProtectedRoute>} />
+        <Route path="/two-side-resume" element={<ProtectedRoute><TwoSideResume /></ProtectedRoute>} />
         <Route path="/preview" element={<ProtectedRoute><ResumePreview /></ProtectedRoute>} />
         <Route path="/resume-view/:resumeId" element={<ProtectedRoute><ResumeView /></ProtectedRoute>} />
         <Route path="/job-search" element={<ProtectedRoute><JobSearch /></ProtectedRoute>} />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import OptimizedImage from './OptimizedImage';
 
 const DynamicResumeBuilder: React.FC = () => {
   const navigate = useNavigate();
@@ -23,15 +24,18 @@ const DynamicResumeBuilder: React.FC = () => {
 
           {/* Resume Template Selection */}
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            <div className="p-4 transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-2xl">
+            <div className="flex flex-col p-4 transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-2xl">
               <div 
-                className="overflow-hidden transition-all duration-300 border-4 border-transparent rounded-lg cursor-pointer hover:border-green-500"
+                className="flex items-center justify-center overflow-hidden transition-all duration-300 border-4 border-transparent rounded-lg cursor-pointer h-96 bg-gray-50 hover:border-green-500"
                 onClick={() => navigate('/dynamic-resume-editor')}
               >
-                <img 
+                <OptimizedImage
                   src="/resume-1.png" 
                   alt="Resume Template 1" 
-                  className="object-cover w-full h-auto"
+                  width={600}
+                  quality={85}
+                  fit="contain"
+                  className="object-contain w-full h-full"
                 />
               </div>
               
@@ -40,9 +44,31 @@ const DynamicResumeBuilder: React.FC = () => {
                 <p className="mt-1 text-xs text-gray-500">Professional & Clean</p>
               </div>
             </div>
+
+            
+            <div className="flex flex-col p-4 transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-2xl">
+              <div 
+                className="flex items-center justify-center overflow-hidden transition-all duration-300 border-4 border-transparent rounded-lg cursor-pointer h-96 bg-gray-50 hover:border-green-500"
+                onClick={() => navigate('/two-side-resume')}
+              >
+                <OptimizedImage
+                  src="/resume-2.png" 
+                  alt="Resume Template 2" 
+                  width={600}
+                  quality={85}
+                  fit="contain"
+                  className="object-contain w-full h-full"
+                />
+              </div>
+              
+              <div className="mt-3 text-center">
+                <p className="text-sm font-medium text-gray-700">Modern Template</p>
+                <p className="mt-1 text-xs text-gray-500">Contemporary & Bold</p>
+              </div>
+            </div>
             
             {/* Placeholder for future templates */}
-            <div className="flex flex-col items-center justify-center p-4 transition-all duration-300 bg-white border-2 border-gray-300 border-dashed shadow-lg rounded-xl hover:border-green-300 hover:shadow-xl">
+            <div className="flex flex-col items-center justify-center p-4 transition-all duration-300 bg-white border-2 border-gray-300 border-dashed shadow-lg rounded-xl hover:border-green-300 hover:shadow-xl h-96">
               <div className="mb-2 text-4xl text-gray-300">➕</div>
               <p className="text-sm font-medium text-gray-400">More templates</p>
               <p className="mt-1 text-xs text-gray-400">Coming soon</p>
