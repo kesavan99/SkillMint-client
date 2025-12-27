@@ -1,0 +1,189 @@
+/**
+ * COLOR SYSTEM - Enterprise Level Design Tokens
+ * 
+ * This file contains all color definitions using CSS custom properties
+ * with light-dark() function for automatic theme switching.
+ * 
+ * Based on primary color: #19B86B (SkillMint Green)
+ * 
+ * Usage: Change colors here to update the entire application theme
+ */
+
+:root {
+  color-scheme: light dark;
+  
+  /* ============================================
+     PRIMARY COLORS - Main Brand Identity
+     ============================================ */
+  --color-primary-start: #19B86B;
+  --color-primary-end: #0ea05a;
+  
+  --color-primary-50: light-dark(#f0fdf7, #052e1a);
+  --color-primary-100: light-dark(#dcfce8, #064220);
+  --color-primary-200: light-dark(#bbf7d3, #0a6331);
+  --color-primary-300: light-dark(#86efb0, #0d7a3d);
+  --color-primary-400: light-dark(#4ade88, #0ea05a);
+  --color-primary-500: light-dark(#19B86B, #22c776);
+  --color-primary-600: light-dark(#16a05e, #34d399);
+  --color-primary-700: light-dark(#138951, #4ade88);
+  --color-primary-800: light-dark(#0f6e40, #86efb0);
+  --color-primary-900: light-dark(#0a5530, #bbf7d3);
+  
+  /* ============================================
+     SECONDARY COLORS - Accent & Highlights
+     ============================================ */
+  --color-secondary-50: light-dark(#fdf4ff, #4a0150);
+  --color-secondary-100: light-dark(#fae8ff, #6d1875);
+  --color-secondary-200: light-dark(#f5d0ff, #821892);
+  --color-secondary-300: light-dark(#eea9ff, #9d1ab3);
+  --color-secondary-400: light-dark(#e477ff, #ba22d8);
+  --color-secondary-500: light-dark(#d444f1, #e477ff);
+  --color-secondary-600: light-dark(#ba22d8, #eea9ff);
+  --color-secondary-700: light-dark(#9d1ab3, #f5d0ff);
+  --color-secondary-800: light-dark(#821892, #fae8ff);
+  --color-secondary-900: light-dark(#6d1875, #fdf4ff);
+  
+  /* ============================================
+     NEUTRAL COLORS - Text, Backgrounds, Borders
+     ============================================ */
+  --color-text-primary: light-dark(#1a1a1a, #f5f5f5);
+  --color-text-secondary: light-dark(#4a5568, #cbd5e0);
+  --color-text-tertiary: light-dark(#718096, #a0aec0);
+  --color-text-disabled: light-dark(#a0aec0, #4a5568);
+  --color-text-inverse: light-dark(#ffffff, #1a1a1a);
+  
+  --color-bg-primary: light-dark(#ffffff, #1a202c);
+  --color-bg-secondary: light-dark(#f7fafc, #2d3748);
+  --color-bg-tertiary: light-dark(#edf2f7, #4a5568);
+  --color-bg-overlay: light-dark(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7));
+  
+  --color-border-light: light-dark(#e2e8f0, #4a5568);
+  --color-border-medium: light-dark(#cbd5e0, #2d3748);
+  --color-border-dark: light-dark(#a0aec0, #1a202c);
+  
+  /* ============================================
+     SEMANTIC COLORS - Status & Feedback
+     ============================================ */
+  
+  /* Success - Green */
+  --color-success: light-dark(#10b981, #34d399);
+  --color-success-light: light-dark(#d1fae5, #064e3b);
+  --color-success-dark: light-dark(#047857, #6ee7b7);
+  --color-success-text: light-dark(#065f46, #d1fae5);
+  
+  /* Warning - Amber */
+  --color-warning: light-dark(#f59e0b, #fbbf24);
+  --color-warning-light: light-dark(#fef3c7, #78350f);
+  --color-warning-dark: light-dark(#d97706, #fcd34d);
+  --color-warning-text: light-dark(#92400e, #fef3c7);
+  
+  /* Error - Red */
+  --color-error: light-dark(#ef4444, #f87171);
+  --color-error-light: light-dark(#fee2e2, #7f1d1d);
+  --color-error-dark: light-dark(#dc2626, #fca5a5);
+  --color-error-text: light-dark(#991b1b, #fee2e2);
+  
+  /* Info - Blue */
+  --color-info: light-dark(#3b82f6, #60a5fa);
+  --color-info-light: light-dark(#dbeafe, #1e3a8a);
+  --color-info-dark: light-dark(#2563eb, #93c5fd);
+  --color-info-text: light-dark(#1e40af, #dbeafe);
+  
+  /* ============================================
+     UI COMPONENT COLORS
+     ============================================ */
+  
+  /* Navigation Bar */
+  --color-navbar-bg: light-dark(rgba(255, 255, 255, 0.95), rgba(26, 32, 44, 0.95));
+  --color-navbar-text: var(--color-text-primary);
+  --color-navbar-border: light-dark(rgba(226, 232, 240, 0.8), rgba(74, 85, 104, 0.8));
+  
+  /* Buttons */
+  --color-button-primary-bg: linear-gradient(135deg, var(--color-primary-start) 0%, var(--color-primary-end) 100%);
+  --color-button-primary-text: #ffffff;
+  --color-button-primary-hover: light-dark(#5766d4, #8a9cff);
+  
+  --color-button-secondary-bg: light-dark(#f7fafc, #2d3748);
+  --color-button-secondary-text: var(--color-text-primary);
+  --color-button-secondary-hover: light-dark(#edf2f7, #4a5568);
+  
+  --color-button-disabled-bg: light-dark(#e2e8f0, #4a5568);
+  --color-button-disabled-text: var(--color-text-disabled);
+  
+  /* Inputs */
+  --color-input-bg: var(--color-bg-primary);
+  --color-input-border: var(--color-border-light);
+  --color-input-border-focus: var(--color-primary-500);
+  --color-input-text: var(--color-text-primary);
+  --color-input-placeholder: var(--color-text-tertiary);
+  --color-input-disabled-bg: light-dark(#f7fafc, #2d3748);
+  
+  /* Cards & Containers */
+  --color-card-bg: var(--color-bg-primary);
+  --color-card-border: var(--color-border-light);
+  --color-card-shadow: light-dark(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+  --color-card-shadow-hover: light-dark(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5));
+  
+  /* Dialogs & Modals */
+  --color-dialog-bg: var(--color-bg-primary);
+  --color-dialog-border: var(--color-border-medium);
+  --color-dialog-shadow: light-dark(rgba(0, 0, 0, 0.25), rgba(0, 0, 0, 0.6));
+  --color-dialog-overlay: var(--color-bg-overlay);
+  
+  /* Banners & Notifications */
+  --color-banner-success-bg: var(--color-success-light);
+  --color-banner-success-text: var(--color-success-text);
+  --color-banner-success-border: var(--color-success);
+  
+  --color-banner-warning-bg: var(--color-warning-light);
+  --color-banner-warning-text: var(--color-warning-text);
+  --color-banner-warning-border: var(--color-warning);
+  
+  --color-banner-error-bg: var(--color-error-light);
+  --color-banner-error-text: var(--color-error-text);
+  --color-banner-error-border: var(--color-error);
+  
+  --color-banner-info-bg: var(--color-info-light);
+  --color-banner-info-text: var(--color-info-text);
+  --color-banner-info-border: var(--color-info);
+  
+  /* Popovers & Tooltips */
+  --color-popover-bg: light-dark(#1a202c, #f7fafc);
+  --color-popover-text: light-dark(#f7fafc, #1a202c);
+  --color-popover-border: light-dark(#2d3748, #e2e8f0);
+  
+  /* Code Editor (HackerRank-like) */
+  --color-code-bg: light-dark(#1e293b, #0f172a);
+  --color-code-text: light-dark(#e2e8f0, #cbd5e0);
+  --color-code-line-number: light-dark(#64748b, #475569);
+  --color-code-selection: light-dark(rgba(59, 130, 246, 0.3), rgba(96, 165, 250, 0.3));
+  --color-code-cursor: light-dark(#3b82f6, #60a5fa);
+  
+  /* Progress Indicators */
+  --color-progress-bg: light-dark(#e2e8f0, #4a5568);
+  --color-progress-fill: linear-gradient(90deg, var(--color-primary-start), var(--color-primary-end));
+  
+  /* Dividers */
+  --color-divider: var(--color-border-light);
+  
+  /* Shadows */
+  --shadow-sm: light-dark(0 1px 2px 0 rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgba(0, 0, 0, 0.3));
+  --shadow-md: light-dark(0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 4px 6px -1px rgba(0, 0, 0, 0.4));
+  --shadow-lg: light-dark(0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.5));
+  --shadow-xl: light-dark(0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 20px 25px -5px rgba(0, 0, 0, 0.6));
+  
+  /* Focus Ring */
+  --color-focus-ring: light-dark(rgba(102, 126, 234, 0.5), rgba(138, 156, 255, 0.5));
+}
+
+/* ============================================
+   GRADIENT UTILITIES
+   ============================================ */
+:root {
+  --gradient-primary: linear-gradient(135deg, var(--color-primary-start) 0%, var(--color-primary-end) 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #16a05e 0%, #0a5530 100%);
+  --gradient-secondary: linear-gradient(135deg, var(--color-secondary-400) 0%, var(--color-secondary-600) 100%);
+  --gradient-success: linear-gradient(135deg, #19B86B 0%, #0ea05a 100%);
+  --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  --gradient-error: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}

@@ -1,0 +1,270 @@
+/**
+ * TYPOGRAPHY SYSTEM - Enterprise Level Design Tokens
+ * 
+ * This file contains all typography-related CSS custom properties
+ * including font sizes, weights, line heights, and letter spacing.
+ * 
+ * Optimized for laptop/desktop screens (no mobile media queries)
+ * 
+ * Usage: Change values here to update typography across the application
+ */
+
+:root {
+  /* ============================================
+     FONT FAMILIES
+     ============================================ */
+  --font-family-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  --font-family-mono: 'Fira Code', 'Courier New', Courier, monospace;
+  --font-family-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  
+  /* ============================================
+     FONT SIZES - Desktop Optimized
+     ============================================ */
+  --font-size-xs: 0.75rem;      /* 12px */
+  --font-size-sm: 0.875rem;     /* 14px */
+  --font-size-base: 1rem;       /* 16px */
+  --font-size-lg: 1.125rem;     /* 18px */
+  --font-size-xl: 1.25rem;      /* 20px */
+  --font-size-2xl: 1.5rem;      /* 24px */
+  --font-size-3xl: 1.875rem;    /* 30px */
+  --font-size-4xl: 2.25rem;     /* 36px */
+  --font-size-5xl: 3rem;        /* 48px */
+  --font-size-6xl: 3.75rem;     /* 60px */
+  
+  /* ============================================
+     FONT WEIGHTS
+     ============================================ */
+  --font-weight-thin: 100;
+  --font-weight-extralight: 200;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --font-weight-black: 900;
+  
+  /* ============================================
+     LINE HEIGHTS
+     ============================================ */
+  --line-height-none: 1;
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+  --line-height-loose: 2;
+  
+  /* ============================================
+     LETTER SPACING
+     ============================================ */
+  --letter-spacing-tighter: -0.05em;
+  --letter-spacing-tight: -0.025em;
+  --letter-spacing-normal: 0em;
+  --letter-spacing-wide: 0.025em;
+  --letter-spacing-wider: 0.05em;
+  --letter-spacing-widest: 0.1em;
+  
+  /* ============================================
+     COMPONENT-SPECIFIC TYPOGRAPHY
+     ============================================ */
+  
+  /* Headings */
+  --heading-h1-size: var(--font-size-5xl);
+  --heading-h1-weight: var(--font-weight-bold);
+  --heading-h1-line-height: var(--line-height-tight);
+  --heading-h1-letter-spacing: var(--letter-spacing-tight);
+  
+  --heading-h2-size: var(--font-size-4xl);
+  --heading-h2-weight: var(--font-weight-bold);
+  --heading-h2-line-height: var(--line-height-tight);
+  --heading-h2-letter-spacing: var(--letter-spacing-tight);
+  
+  --heading-h3-size: var(--font-size-3xl);
+  --heading-h3-weight: var(--font-weight-semibold);
+  --heading-h3-line-height: var(--line-height-snug);
+  --heading-h3-letter-spacing: var(--letter-spacing-normal);
+  
+  --heading-h4-size: var(--font-size-2xl);
+  --heading-h4-weight: var(--font-weight-semibold);
+  --heading-h4-line-height: var(--line-height-snug);
+  --heading-h4-letter-spacing: var(--letter-spacing-normal);
+  
+  --heading-h5-size: var(--font-size-xl);
+  --heading-h5-weight: var(--font-weight-medium);
+  --heading-h5-line-height: var(--line-height-normal);
+  --heading-h5-letter-spacing: var(--letter-spacing-normal);
+  
+  --heading-h6-size: var(--font-size-lg);
+  --heading-h6-weight: var(--font-weight-medium);
+  --heading-h6-line-height: var(--line-height-normal);
+  --heading-h6-letter-spacing: var(--letter-spacing-normal);
+  
+  /* Body Text */
+  --body-text-size: var(--font-size-base);
+  --body-text-weight: var(--font-weight-normal);
+  --body-text-line-height: var(--line-height-normal);
+  --body-text-letter-spacing: var(--letter-spacing-normal);
+  
+  --body-text-small-size: var(--font-size-sm);
+  --body-text-small-weight: var(--font-weight-normal);
+  --body-text-small-line-height: var(--line-height-normal);
+  
+  --body-text-large-size: var(--font-size-lg);
+  --body-text-large-weight: var(--font-weight-normal);
+  --body-text-large-line-height: var(--line-height-relaxed);
+  
+  /* Buttons */
+  --button-text-size: var(--font-size-base);
+  --button-text-weight: var(--font-weight-semibold);
+  --button-text-letter-spacing: var(--letter-spacing-wide);
+  
+  --button-sm-text-size: var(--font-size-sm);
+  --button-sm-text-weight: var(--font-weight-medium);
+  
+  --button-lg-text-size: var(--font-size-lg);
+  --button-lg-text-weight: var(--font-weight-semibold);
+  
+  /* Input Fields */
+  --input-text-size: var(--font-size-base);
+  --input-text-weight: var(--font-weight-normal);
+  --input-label-size: var(--font-size-sm);
+  --input-label-weight: var(--font-weight-medium);
+  --input-helper-size: var(--font-size-xs);
+  --input-helper-weight: var(--font-weight-normal);
+  
+  /* Navigation */
+  --nav-text-size: var(--font-size-base);
+  --nav-text-weight: var(--font-weight-medium);
+  --nav-text-letter-spacing: var(--letter-spacing-wide);
+  
+  /* Labels & Badges */
+  --label-text-size: var(--font-size-xs);
+  --label-text-weight: var(--font-weight-semibold);
+  --label-text-letter-spacing: var(--letter-spacing-wider);
+  
+  --badge-text-size: var(--font-size-xs);
+  --badge-text-weight: var(--font-weight-bold);
+  
+  /* Code & Monospace */
+  --code-text-size: var(--font-size-sm);
+  --code-text-weight: var(--font-weight-normal);
+  --code-line-height: var(--line-height-relaxed);
+  
+  --code-block-text-size: var(--font-size-sm);
+  --code-inline-text-size: 0.875em;
+  
+  /* Tables */
+  --table-header-size: var(--font-size-sm);
+  --table-header-weight: var(--font-weight-semibold);
+  --table-header-letter-spacing: var(--letter-spacing-wide);
+  
+  --table-cell-size: var(--font-size-sm);
+  --table-cell-weight: var(--font-weight-normal);
+  
+  /* Tooltips & Popovers */
+  --tooltip-text-size: var(--font-size-xs);
+  --tooltip-text-weight: var(--font-weight-medium);
+  
+  /* Notifications & Banners */
+  --notification-title-size: var(--font-size-base);
+  --notification-title-weight: var(--font-weight-semibold);
+  --notification-text-size: var(--font-size-sm);
+  --notification-text-weight: var(--font-weight-normal);
+  
+  /* Dialog & Modal */
+  --dialog-title-size: var(--font-size-2xl);
+  --dialog-title-weight: var(--font-weight-semibold);
+  --dialog-text-size: var(--font-size-base);
+  --dialog-text-weight: var(--font-weight-normal);
+}
+
+/* ============================================
+   HEADING CLASSES
+   ============================================ */
+h1, .h1 {
+  font-size: var(--heading-h1-size);
+  font-weight: var(--heading-h1-weight);
+  line-height: var(--heading-h1-line-height);
+  letter-spacing: var(--heading-h1-letter-spacing);
+  font-family: var(--font-family-heading);
+}
+
+h2, .h2 {
+  font-size: var(--heading-h2-size);
+  font-weight: var(--heading-h2-weight);
+  line-height: var(--heading-h2-line-height);
+  letter-spacing: var(--heading-h2-letter-spacing);
+  font-family: var(--font-family-heading);
+}
+
+h3, .h3 {
+  font-size: var(--heading-h3-size);
+  font-weight: var(--heading-h3-weight);
+  line-height: var(--heading-h3-line-height);
+  letter-spacing: var(--heading-h3-letter-spacing);
+  font-family: var(--font-family-heading);
+}
+
+h4, .h4 {
+  font-size: var(--heading-h4-size);
+  font-weight: var(--heading-h4-weight);
+  line-height: var(--heading-h4-line-height);
+  letter-spacing: var(--heading-h4-letter-spacing);
+  font-family: var(--font-family-heading);
+}
+
+h5, .h5 {
+  font-size: var(--heading-h5-size);
+  font-weight: var(--heading-h5-weight);
+  line-height: var(--heading-h5-line-height);
+  letter-spacing: var(--heading-h5-letter-spacing);
+  font-family: var(--font-family-heading);
+}
+
+h6, .h6 {
+  font-size: var(--heading-h6-size);
+  font-weight: var(--heading-h6-weight);
+  line-height: var(--heading-h6-line-height);
+  letter-spacing: var(--heading-h6-letter-spacing);
+  font-family: var(--font-family-heading);
+}
+
+/* ============================================
+   BODY TEXT CLASSES
+   ============================================ */
+body, .body-text {
+  font-family: var(--font-family-sans);
+  font-size: var(--body-text-size);
+  font-weight: var(--body-text-weight);
+  line-height: var(--body-text-line-height);
+  letter-spacing: var(--body-text-letter-spacing);
+}
+
+.body-text-small {
+  font-size: var(--body-text-small-size);
+  font-weight: var(--body-text-small-weight);
+  line-height: var(--body-text-small-line-height);
+}
+
+.body-text-large {
+  font-size: var(--body-text-large-size);
+  font-weight: var(--body-text-large-weight);
+  line-height: var(--body-text-large-line-height);
+}
+
+/* ============================================
+   CODE & MONOSPACE CLASSES
+   ============================================ */
+code, kbd, samp, pre {
+  font-family: var(--font-family-mono);
+}
+
+code {
+  font-size: var(--code-inline-text-size);
+  font-weight: var(--code-text-weight);
+}
+
+pre {
+  font-size: var(--code-block-text-size);
+  line-height: var(--code-line-height);
+}

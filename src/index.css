@@ -1,0 +1,405 @@
+/**
+ * MAIN STYLESHEET - SkillMint Application
+ * Enterprise-level design system with modern CSS features
+ */
+
+/* ============================================
+   DESIGN SYSTEM IMPORTS - Must be first!
+   ============================================ */
+@import './styles/colors.css';
+@import './styles/typography.css';
+
+/* ============================================
+   TAILWIND CSS DIRECTIVES
+   ============================================ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   VIEW TRANSITIONS API
+   Smooth page transitions for SPA navigation
+   ============================================ */
+@view-transition {
+  navigation: auto;
+}
+
+/* Customize view transition animations */
+::view-transition-old(root) {
+  animation: fade-out 0.3s ease-out;
+}
+
+::view-transition-new(root) {
+  animation: fade-in 0.3s ease-in;
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   CSS CONTAINER QUERIES SETUP
+   ============================================ */
+.container-query {
+  container-type: inline-size;
+  container-name: main;
+}
+
+/* Container query breakpoints */
+@container main (min-width: 640px) {
+  .cq-sm\:text-lg {
+    font-size: var(--font-size-lg);
+  }
+}
+
+@container main (min-width: 768px) {
+  .cq-md\:text-xl {
+    font-size: var(--font-size-xl);
+  }
+}
+
+@container main (min-width: 1024px) {
+  .cq-lg\:text-2xl {
+    font-size: var(--font-size-2xl);
+  }
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+@layer base {
+  :root {
+    /* Green gradient background for pages */
+    --bg-gradient-green: linear-gradient(to bottom right, #10b981, #059669, #14b8a6);
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  body {
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-primary);
+    font-family: var(--font-family-sans);
+    font-size: var(--body-text-size);
+    line-height: var(--body-text-line-height);
+    font-weight: var(--body-text-weight);
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Selection styling */
+  ::selection {
+    background-color: #19B86B;
+    color: white;
+  }
+  
+  ::-moz-selection {
+    background-color: #19B86B;
+    color: white;
+  }
+  
+  /* Focus visible for accessibility */
+  :focus-visible {
+    outline: 2px solid var(--color-primary-500);
+    outline-offset: 2px;
+  }
+  
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-medium);
+    border-radius: 6px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-primary-500);
+  }
+}
+
+/* ============================================
+   COMPONENT LAYER - Reusable Components
+   ============================================ */
+@layer components {
+  /* Button Components */
+  .btn {
+    @apply px-4 py-2 rounded-md font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+  }
+  
+  .btn-primary {
+    background: linear-gradient(135deg, #19B86B 0%, #0ea05a 100%);
+    color: #ffffff;
+    @apply hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0;
+  }
+  
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #16a05e 0%, #0a5530 100%);
+  }
+  
+  .btn-primary:disabled {
+    background: #e2e8f0;
+    color: #a0aec0;
+    @apply cursor-not-allowed hover:shadow-none hover:translate-y-0;
+    opacity: 0.6;
+  }
+  
+  .btn-secondary {
+    background: #f7fafc;
+    color: #1a1a1a;
+    @apply border border-solid;
+    border-color: #e2e8f0;
+  }
+  
+  .btn-secondary:hover {
+    background: #edf2f7;
+  }
+  
+  /* Input Components */
+  .input {
+    @apply w-full px-3 py-2 rounded-md transition-all duration-200;
+    background: #ffffff !important;
+    border: 2px solid #e2e8f0;
+    color: #1a1a1a !important;
+    font-size: 1rem;
+    font-weight: 400;
+  }
+  
+  .input::placeholder {
+    color: #718096;
+  }
+  
+  .input:focus {
+    border-color: #19B86B;
+    box-shadow: 0 0 0 3px rgba(25, 184, 107, 0.3);
+  }
+  
+  .input:disabled {
+    background: #f7fafc !important;
+    color: #a0aec0;
+    @apply cursor-not-allowed;
+  }
+  
+  /* Override browser autofill styles */
+  .input:-webkit-autofill,
+  .input:-webkit-autofill:hover,
+  .input:-webkit-autofill:focus,
+  .input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: #1a1a1a !important;
+  }
+  
+  /* Ensure password input text is always black */
+  input[type="password"] {
+    color: #1a1a1a !important;
+  }
+  
+  /* Card Components */
+  .card {
+    @apply rounded-lg p-6;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Banner Components */
+  .banner {
+    @apply px-4 py-3 rounded-md border-l-4;
+    font-size: 0.875rem;
+  }
+  
+  .banner-success {
+    background: #dcfce8;
+    color: #064220;
+    border-color: #19B86B;
+  }
+  
+  .banner-warning {
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #f59e0b;
+  }
+  
+  .banner-error {
+    @apply p-4 mb-4 text-sm border-2 rounded-lg;
+    background: #fee2e2;
+    color: #991b1b;
+    border-color: #ef4444;
+    font-weight: 500;
+  }
+  
+  .banner-warning {
+    @apply p-4 mb-4 text-sm border-2 rounded-lg;
+    background: #fef3c7;
+    color: #92400e;
+    border-color: #f59e0b;
+    font-weight: 500;
+  }
+  
+  .banner-rate-limit {
+    @apply p-4 mb-4 text-sm border-2 rounded-lg flex items-start gap-3;
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+    border-color: #f59e0b;
+    font-weight: 500;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .banner-info {
+    background: #dbeafe;
+    color: #1e40af;
+    border-color: #3b82f6;
+  }
+  
+  /* Navigation Bar */
+  .navbar {
+    @apply sticky top-0 z-50 border-b;
+    background: var(--color-navbar-bg);
+    border-color: var(--color-navbar-border);
+    backdrop-filter: blur(10px);
+  }
+  
+  /* Dialog/Modal */
+  .dialog {
+    @apply rounded-lg;
+    background: var(--color-dialog-bg);
+    border: 1px solid var(--color-dialog-border);
+    box-shadow: var(--shadow-xl);
+  }
+  
+  .dialog-overlay {
+    background: var(--color-dialog-overlay);
+    backdrop-filter: blur(4px);
+  }
+  
+  /* Progress Bar */
+  .progress-bar {
+    @apply w-full h-2 rounded-full overflow-hidden;
+    background: var(--color-progress-bg);
+  }
+  
+  .progress-fill {
+    @apply h-full transition-all duration-300;
+    background: var(--color-progress-fill);
+  }
+}
+
+/* ============================================
+   UTILITY LAYER - Custom Utilities
+   ============================================ */
+@layer utilities {
+  .gradient-primary {
+    background: linear-gradient(135deg, #19B86B 0%, #0ea05a 100%);
+  }
+  
+  .gradient-text {
+    background: linear-gradient(135deg, #19B86B 0%, #0ea05a 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .glass-effect {
+    backdrop-filter: blur(10px) saturate(180%);
+    background: light-dark(rgba(255, 255, 255, 0.8), rgba(26, 32, 44, 0.8));
+  }
+  
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+  
+  @keyframes gradient-shift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .text-shadow-md {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+  
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  * {
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
+
+.ai-analysis-form{
+  textarea{
+    background-color: white !important;
+    min-height: 250px;
+  }
+  select{
+    background-color: white !important;
+  }
+}
+
+.logo-image{
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-bottom: 5%;
+  padding-top: 5%;
+}
+
+.login-card{
+  border-color: #19B86B;
+}
