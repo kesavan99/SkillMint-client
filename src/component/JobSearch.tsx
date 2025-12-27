@@ -125,8 +125,6 @@ const JobSearch: React.FC = () => {
     setSearchResults([]); // Clear previous results
     
     try {
-      console.log('Searching for jobs with criteria:', formData);
-      
       const response = await jobSearchAPI.searchJobs({
         role: formData.role,
         designation: formData.role,
@@ -171,114 +169,8 @@ const JobSearch: React.FC = () => {
           <p className="text-lg text-white/90">Find your dream job by entering your preferences</p>
         </div>
 
-        <div className="flex flex-col gap-6 lg:flex-row">
-          {/* Left Sidebar - Job Platforms */}
-          <div className="lg:w-80 shrink-0">
-            <div className="sticky p-6 bg-white shadow-xl top-6 rounded-2xl">
-              <h3 className="mb-4 text-lg font-bold text-gray-800">Job Platforms</h3>
-              <p className="mb-6 text-sm text-gray-600">Login to apply directly on these platforms</p>
-              
-              <div className="space-y-4">
-                {/* Naukri.com */}
-                <div className="p-4 transition-all border border-gray-200 rounded-lg hover:shadow-md hover:border-primary-200">
-                  <div className="flex items-center justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-12 h-12">
-                      <svg width="48" height="48" viewBox="0 0 278 278" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="139" cy="139" r="139" fill="#265DF5"/>
-                        <path d="M180.8 190.49L180.49 204.58L179.59 245.26V246.83C110.85 187.34 99.14 172.83 97.11 168.42L97.04 168.27C96.7956 167.44 96.7376 166.565 96.87 165.71C96.9185 165.393 96.9853 165.079 97.07 164.77C97.14 164.52 97.21 164.28 97.3 164.02C98.0409 162.074 99.0911 160.261 100.41 158.65C101.355 157.429 102.384 156.277 103.49 155.2C105.855 152.861 108.389 150.699 111.07 148.73C112.4 147.73 113.79 146.73 115.26 145.73C118.1 143.79 121.17 141.85 124.35 139.96C149.05 163 180.4 190.12 180.8 190.49Z" fill="url(#paint0_linear)"/>
-                        <path d="M181.71 56.86L181.4 71L181.24 78L180.92 92.07L180.76 99.13L180.45 113.21C179.96 113.41 148.61 125.57 124.45 139.94C121.27 141.83 118.21 143.77 115.36 145.71C113.9 146.71 112.5 147.71 111.17 148.71C108.493 150.684 105.96 152.846 103.59 155.18C102.487 156.259 101.458 157.412 100.51 158.63C98.3301 161.41 97.0201 164.14 96.8301 166.71L97.09 154.96V154.88L97.1401 153.06V152.4L97.35 144.99L97.7501 130.3L97.9401 123.12L98.34 108.56C103.31 88.18 173.5 60.09 181.71 56.86Z" fill="white"/>
-                        <circle cx="117" cy="51.81" r="20.63" fill="white"/>
-                        <defs>
-                          <linearGradient id="paint0_linear" x1="166.59" y1="211.83" x2="85.0601" y2="117.78" gradientUnits="userSpaceOnUse">
-                            <stop stopColor="white"/>
-                            <stop offset="1" stopColor="#E8F0FE"/>
-                          </linearGradient>
-                        </defs>
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900">Naukri.com</h4>
-                      <p className="text-xs text-gray-500">India's #1 Job Portal</p>
-                    </div>
-                    </div>
-                  </div>
-                  <a
-                    href="https://www.naukri.com/nlogin/login"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full px-4 py-2 text-sm font-semibold text-center text-white transition-all bg-blue-600 rounded-lg hover:bg-blue-700"
-                  >
-                    Login to Naukri
-                  </a>
-                </div>
-
-                {/* LinkedIn */}
-                <div className="p-4 transition-all border border-gray-200 rounded-lg hover:shadow-md hover:border-primary-200">
-                  <div className="flex items-center justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-blue-50">
-                      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <rect width="24" height="24" rx="4" fill="#0A66C2"/>
-                        <path d="M7.5 9H5V19H7.5V9Z" fill="white"/>
-                        <path d="M6.25 7.5C7.07843 7.5 7.75 6.82843 7.75 6C7.75 5.17157 7.07843 4.5 6.25 4.5C5.42157 4.5 4.75 5.17157 4.75 6C4.75 6.82843 5.42157 7.5 6.25 7.5Z" fill="white"/>
-                        <path d="M13.5 13.5C13.5 12.4 14.1 11.5 15.3 11.5C16.4 11.5 17 12.3 17 13.5V19H19.5V13C19.5 10.5 18.3 9 16.2 9C15.1 9 14.2 9.5 13.5 10.3V9H11V19H13.5V13.5Z" fill="white"/>
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900">LinkedIn</h4>
-                      <p className="text-xs text-gray-500">Professional Network</p>
-                    </div>
-                    </div>
-                  </div>
-                  <a
-                    href="https://www.linkedin.com/login"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full px-4 py-2 text-sm font-semibold text-center text-white transition-all bg-blue-600 rounded-lg hover:bg-blue-700"
-                  >
-                    Login to LinkedIn
-                  </a>
-                </div>
-
-                {/* Indeed */}
-                <div className="p-4 transition-all border border-gray-200 rounded-lg hover:shadow-md hover:border-primary-200">
-                  <div className="flex items-center justify-between gap-3 mb-3">
-                    <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-12 h-12">
-                      <img 
-                        src="/indeed.jpeg" 
-                        alt="Indeed" 
-                        className="object-contain w-full h-full rounded-lg"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900">Indeed</h4>
-                      <p className="text-xs text-gray-500">Global Job Search</p>
-                    </div>
-                    </div>
-                  </div>
-                  <a
-                    href="https://secure.indeed.com/account/login"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block w-full px-4 py-2 text-sm font-semibold text-center text-white transition-all bg-blue-600 rounded-lg hover:bg-blue-700"
-                  >
-                    Login to Indeed
-                  </a>
-                </div>
-              </div>
-
-              <div className="p-4 mt-6 rounded-lg bg-primary-50">
-                <p className="text-xs text-gray-700">
-                  💡 <span className="font-semibold">Tip:</span> Login to these platforms for a seamless application experience. Click "Apply Now" on any job to open it directly on the platform.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Main Content Area */}
-          <div className="flex-1 min-w-0">
+        <div className="flex flex-col gap-6">
+          <div className="w-full">
             {/* Search Form */}
             <div className="p-6 mb-8 bg-white shadow-xl md:p-8 rounded-2xl">
             <form onSubmit={handleSubmit} className="space-y-6">

@@ -7,7 +7,6 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth();
 
-  // Clear resume data when returning to home
   useEffect(() => {
     localStorage.removeItem('resumeData');
     localStorage.removeItem('selectedTemplate');
@@ -19,7 +18,6 @@ const Home: React.FC = () => {
 
       <main className="px-5 py-16 mx-auto max-w-7xl">
         {!isAuthenticated ? (
-          /* Hero Section for Non-Authenticated Users */
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="mb-6 text-4xl font-bold text-gray-900 md:text-5xl lg:text-6xl">
               Build Your Professional Resume
@@ -42,7 +40,6 @@ const Home: React.FC = () => {
               </button>
             </div>
 
-            {/* Features Grid for Public */}
             <div className="grid grid-cols-1 gap-8 mt-16 md:grid-cols-3">
               <div className="p-6 bg-white shadow-lg rounded-xl">
                 <div className="mb-4 text-4xl">📄</div>
@@ -62,7 +59,6 @@ const Home: React.FC = () => {
             </div>
           </div>
         ) : (
-          /* Feature Cards for Authenticated Users */
           <div className="grid max-w-6xl grid-cols-1 gap-8 mx-auto md:grid-cols-2 lg:grid-cols-4">
           <div 
             className="p-8 transition-all duration-300 bg-white border border-transparent cursor-pointer rounded-2xl hover:shadow-2xl hover:-translate-y-2 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50"
@@ -113,8 +109,8 @@ const Home: React.FC = () => {
             </p>
           </div>
         </div>
+        )}
 
-        {/* Features Section */}
         <div className="px-5 py-16 mt-20 -mx-5 bg-gradient-to-r from-purple-100 via-blue-50 to-green-100">
           <div className="mx-auto max-w-7xl">
             <h2 className="mb-12 text-2xl font-bold text-center text-gray-900 md:text-3xl">Why Choose SkillMint?</h2>
@@ -138,7 +134,6 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        {/* About Section */}
         <div className="max-w-4xl py-16 mx-auto">
           <h2 className="mb-8 text-2xl font-bold text-center text-gray-900 md:text-3xl">About SkillMint</h2>
           <div className="p-6 space-y-6 leading-relaxed text-gray-700 bg-white shadow-lg md:p-8 rounded-2xl">
@@ -158,9 +153,7 @@ const Home: React.FC = () => {
             </p>
           </div>
         </div>
-        )}
-
-        {/* Footer */}
+      
         <footer className="pt-10 pb-6 mt-20 border-t border-white/20">
           <div className="grid grid-cols-1 gap-8 mx-auto max-w-7xl md:grid-cols-3">
             <div>
