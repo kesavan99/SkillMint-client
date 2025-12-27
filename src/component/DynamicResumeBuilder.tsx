@@ -1,10 +1,25 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import OptimizedImage from './OptimizedImage';
 
 const DynamicResumeBuilder: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // If format and resumeId are in URL, redirect to appropriate editor
+  useEffect(() => {
+    const format = searchParams.get('format');
+    const resumeId = searchParams.get('resumeId');
+    
+    if (format && resumeId) {
+      if (format === 'two-side') {
+        navigate(`/two-side-resume?resumeId=${resumeId}`, { replace: true });
+      } else if (format === 'classic') {
+        navigate(`/dynamic-resume-editor?resumeId=${resumeId}`, { replace: true });
+      }
+    }
+  }, [searchParams, navigate]);
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg-gradient-green)' }}>

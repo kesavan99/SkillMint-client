@@ -28,6 +28,7 @@ interface SavedResume {
   generatedDate: string;
   templateName: string;
   isDynamic?: boolean;
+  resumeFormat?: string;
 }
 
 const Profile: React.FC = () => {
@@ -136,8 +137,14 @@ const Profile: React.FC = () => {
     const resume = savedResumes.find(r => r.resumeId === resumeId);
     
     if (resume?.isDynamic) {
-      // Open dynamic resume editor in new tab for dynamic resumes
-      window.open(`/dynamic-resume-editor?resumeId=${resumeId}`, '_blank');
+      // Route based on resumeFormat for dynamic resumes
+      if (resume.resumeFormat === 'two-side') {
+        // Two-side format doesn't have a separate preview, open in editor
+        window.open(`/dynamic-resume-builder?format=two-side&resumeId=${resumeId}`, '_blank');
+      } else {
+        // Classic format or default
+        window.open(`/dynamic-resume-editor?resumeId=${resumeId}`, '_blank');
+      }
     } else {
       // Open regular resume view in new tab for normal resumes
       window.open(`/resume-view/${resumeId}`, '_blank');
@@ -149,8 +156,14 @@ const Profile: React.FC = () => {
     const resume = savedResumes.find(r => r.resumeId === resumeId);
     
     if (resume?.isDynamic) {
-      // Navigate to dynamic resume editor for dynamic resumes
-      navigate(`/dynamic-resume-editor?resumeId=${resumeId}`);
+      // Route based on resumeFormat for dynamic resumes
+      if (resume.resumeFormat === 'two-side') {
+        // Navigate to two-side format builder
+        navigate(`/dynamic-resume-builder?format=two-side&resumeId=${resumeId}`);
+      } else {
+        // Classic format or default - navigate to dynamic resume editor
+        navigate(`/dynamic-resume-editor?resumeId=${resumeId}`);
+      }
     } else {
       // Navigate to regular resume builder for normal resumes
       navigate(`/resume-builder?resumeId=${resumeId}`);
@@ -419,7 +432,7 @@ const Profile: React.FC = () => {
           <div className="mt-6 overflow-hidden bg-white shadow-2xl md:mt-8 rounded-2xl">
             <div className="p-4 md:p-8">
               <div className="mb-6">
-                <h2 className="text-xl font-bold md:text-2xl bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent">My Resumes</h2>
+                <h2 className="text-xl font-bold text-transparent md:text-2xl bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text">My Resumes</h2>
                 <p className="mt-1 text-sm text-gray-600">View, edit, and manage your saved resumes</p>
               </div>
               

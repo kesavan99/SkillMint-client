@@ -87,6 +87,8 @@ const DynamicResumeEditor: React.FC = () => {
   const [showAIAnalysis, setShowAIAnalysis] = useState(false);
   const [showCustomSectionDialog, setShowCustomSectionDialog] = useState(false);
   const [newCustomSection, setNewCustomSection] = useState({ heading: '', type: 'paragraph' as 'paragraph' | 'tags' | 'list' });
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Section ordering
   const [sections, setSections] = useState<Section[]>([
@@ -234,7 +236,8 @@ const DynamicResumeEditor: React.FC = () => {
   // Custom Section Handlers
   const addCustomSection = () => {
     if (!newCustomSection.heading.trim()) {
-      alert('Please enter a heading for the custom section');
+      setErrorMessage('Please enter a heading for the custom section');
+      setTimeout(() => setErrorMessage(null), 4000);
       return;
     }
 
@@ -381,8 +384,9 @@ const DynamicResumeEditor: React.FC = () => {
 
       await html2pdf().set(opt).from(element).save();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      alert('Failed to generate PDF: ' + errorMessage);
+      const errMsg = error instanceof Error ? error.message : 'Unknown error';
+      setErrorMessage('Failed to generate PDF: ' + errMsg);
+      setTimeout(() => setErrorMessage(null), 5000);
     } finally {
       setLoading(false);
     }
@@ -391,7 +395,8 @@ const DynamicResumeEditor: React.FC = () => {
   // Save Resume Handler
   const handleSaveResume = async () => {
     if (!resumeName.trim()) {
-      alert('Please enter a resume name');
+      setErrorMessage('Please enter a resume name');
+      setTimeout(() => setErrorMessage(null), 4000);
       return;
     }
 
@@ -409,7 +414,8 @@ const DynamicResumeEditor: React.FC = () => {
         customSections,
         template: 'resume-template', // Using default template for now
         sectionOrder: sections,
-        isDynamic: true // Mark this resume as created from Dynamic Resume Builder
+        isDynamic: true, // Mark this resume as created from Dynamic Resume Builder
+        resumeFormat: 'classic' // Classic format for DynamicResumeEditor
       };
 
       // Include resumeId if editing
@@ -420,13 +426,16 @@ const DynamicResumeEditor: React.FC = () => {
       const response = await saveResume(saveData);
       
       if (response.success) {
-        alert(isEditMode ? 'Resume updated successfully!' : 'Resume saved successfully!');
+        setSuccessMessage(isEditMode ? 'Resume updated successfully!' : 'Resume saved successfully!');
         setShowSaveDialog(false);
-        navigate('/profile');
+        setTimeout(() => {
+          navigate('/profile');
+        }, 1500);
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      alert('Failed to save resume: ' + errorMessage);
+      const errMsg = error instanceof Error ? error.message : 'Unknown error';
+      setErrorMessage('Failed to save resume: ' + errMsg);
+      setTimeout(() => setErrorMessage(null), 5000);
     } finally {
       setSaving(false);
     }
@@ -612,6 +621,50 @@ const DynamicResumeEditor: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+      
+      {/* Success Message Banner */}
+      {successMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <div className="p-4 bg-green-100 border border-green-400 rounded-lg shadow-lg">
+            <div className="flex items-center gap-3">
+              <svg className="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-green-800 font-medium">{successMessage}</p>
+              <button
+                onClick={() => setSuccessMessage(null)}
+                className="ml-auto text-green-600 hover:text-green-800"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Message Banner */}
+      {errorMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <div className="p-4 bg-red-100 border border-red-400 rounded-lg shadow-lg">
+            <div className="flex items-center gap-3">
+              <svg className="w-6 h-6 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-red-800 font-medium">{errorMessage}</p>
+              <button
+                onClick={() => setErrorMessage(null)}
+                className="ml-auto text-red-600 hover:text-red-800"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Top Navigation Bar */}
       <div className="bg-white border-b border-gray-200">

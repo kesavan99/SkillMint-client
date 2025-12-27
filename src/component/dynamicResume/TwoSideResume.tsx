@@ -1,8 +1,9 @@
-import React, { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from '../Navbar';
 import html2pdf from 'html2pdf.js';
 import axios from 'axios';
+import { saveResume, getResumeById } from '../../client-configuration/resume-API';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -53,7 +54,11 @@ interface Section {
 
 const TwoSideResume: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const previewRef = useRef<HTMLDivElement>(null);
+  
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingResumeId, setEditingResumeId] = useState<string | null>(null);
 
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     name: '',
@@ -83,6 +88,9 @@ const TwoSideResume: React.FC = () => {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<{ type: 'success' | 'error' | 'loading'; message: string } | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Section ordering
   const [sections, setSections] = useState<Section[]>([
@@ -94,37 +102,144 @@ const TwoSideResume: React.FC = () => {
     { id: '6', name: 'Certifications', type: 'certifications', enabled: true },
   ]);
 
-  // Photo Upload Handler
+  // Load existing resume if resumeId is present
+  useEffect(() => {
+    const resumeId = searchParams.get('resumeId');
+    if (resumeId) {
+      loadResumeForEditing(resumeId);
+    }
+  }, [searchParams]);
+
+  const loadResumeForEditing = async (resumeId: string) => {
+    try {
+      setLoading(true);
+      const response = await getResumeById(resumeId);
+      
+      if (response.success && response.data) {
+        const resumeData = response.data.resumeData;
+        
+        // Load all resume data
+        if (resumeData.personalInfo) setPersonalInfo(resumeData.personalInfo);
+        if (resumeData.summary) setSummary(resumeData.summary);
+        if (resumeData.skills) setSkills(resumeData.skills);
+        if (resumeData.education) setEducation(resumeData.education);
+        if (resumeData.experience) setExperience(resumeData.experience);
+        if (resumeData.projects) setProjects(resumeData.projects);
+        if (resumeData.certifications) setCertifications(resumeData.certifications);
+        if (resumeData.customSections) setCustomSections(resumeData.customSections);
+        if (resumeData.sectionOrder) setSections(resumeData.sectionOrder);
+        
+        setResumeName(response.data.resumeName || '');
+        setIsEditMode(true);
+        setEditingResumeId(resumeId);
+        
+        setUploadStatus({ 
+          type: 'success', 
+          message: 'Resume loaded successfully. You can now edit it.' 
+        });
+        setTimeout(() => setUploadStatus(null), 3000);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load resume';
+      setUploadStatus({ 
+        type: 'error', 
+        message: errorMessage 
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Photo Upload Handler with compression
   const handlePhotoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      alert('Please upload a valid image file (JPG, PNG, or WebP)');
+      setErrorMessage('Please upload a valid image file (JPG, PNG, or WebP)');
+      setTimeout(() => setErrorMessage(null), 4000);
       return;
     }
 
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      alert('Image size should be less than 5MB');
+      setErrorMessage('Image size should be less than 5MB');
+      setTimeout(() => setErrorMessage(null), 4000);
       return;
     }
 
     setUploadingPhoto(true);
     try {
+      // Create an image element to compress
+      const img = new Image();
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setPersonalInfo({ ...personalInfo, photo: reader.result as string });
+      
+      reader.onload = (e) => {
+        img.src = e.target?.result as string;
+      };
+      
+      img.onload = () => {
+        // Create canvas for compression
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Calculate new dimensions (max 400x400 while maintaining aspect ratio)
+        // Smaller size for resume photos - still looks great
+        let width = img.width;
+        let height = img.height;
+        const maxDimension = 400;
+        
+        if (width > height && width > maxDimension) {
+          height = (height * maxDimension) / width;
+          width = maxDimension;
+        } else if (height > maxDimension) {
+          width = (width * maxDimension) / height;
+          height = maxDimension;
+        }
+        
+        canvas.width = width;
+        canvas.height = height;
+        
+        // Draw and compress
+        ctx?.drawImage(img, 0, 0, width, height);
+        
+        // Convert to base64 with higher compression (0.6 quality for JPEG)
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+        
+        // Check final size (base64 size in bytes)
+        const sizeInBytes = (compressedBase64.length * 3) / 4;
+        const sizeInKB = sizeInBytes / 1024;
+        
+        console.log(`Compressed image size: ${sizeInKB.toFixed(2)} KB`);
+        
+        if (sizeInKB > 500) {
+          setErrorMessage('Compressed image is still too large. Please use a smaller image.');
+          setTimeout(() => setErrorMessage(null), 4000);
+          setUploadingPhoto(false);
+          return;
+        }
+        
+        setPersonalInfo({ ...personalInfo, photo: compressedBase64 });
         setUploadingPhoto(false);
       };
+      
+      img.onerror = () => {
+        setErrorMessage('Failed to load image');
+        setTimeout(() => setErrorMessage(null), 4000);
+        setUploadingPhoto(false);
+      };
+      
       reader.onerror = () => {
-        alert('Failed to upload photo');
+        setErrorMessage('Failed to upload photo');
+        setTimeout(() => setErrorMessage(null), 4000);
         setUploadingPhoto(false);
       };
+      
       reader.readAsDataURL(file);
     } catch {
-      alert('Failed to upload photo');
+      setErrorMessage('Failed to upload photo');
+      setTimeout(() => setErrorMessage(null), 4000);
       setUploadingPhoto(false);
     }
   };
@@ -551,6 +666,50 @@ const TwoSideResume: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
+      
+      {/* Success Message Banner */}
+      {successMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <div className="p-4 bg-green-100 border border-green-400 rounded-lg shadow-lg">
+            <div className="flex items-center gap-3">
+              <svg className="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-green-800 font-medium">{successMessage}</p>
+              <button
+                onClick={() => setSuccessMessage(null)}
+                className="ml-auto text-green-600 hover:text-green-800"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Error Message Banner */}
+      {errorMessage && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+          <div className="p-4 bg-red-100 border border-red-400 rounded-lg shadow-lg">
+            <div className="flex items-center gap-3">
+              <svg className="w-6 h-6 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-red-800 font-medium">{errorMessage}</p>
+              <button
+                onClick={() => setErrorMessage(null)}
+                className="ml-auto text-red-600 hover:text-red-800"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Top Navigation Bar */}
       <div className="bg-white border-b border-gray-200">
@@ -1259,16 +1418,66 @@ const TwoSideResume: React.FC = () => {
                 Cancel
               </button>
               <button
-                onClick={() => {
-                  // TODO: Implement save functionality
-                  alert(`Resume "${resumeName}" will be saved!`);
-                  setShowSaveDialog(false);
-                  setResumeName('');
+                onClick={async () => {
+                  if (!resumeName.trim()) return;
+                  
+                  setSaving(true);
+                  try {
+                    const resumeData = {
+                      resumeName: resumeName.trim(),
+                      personalInfo,
+                      summary,
+                      education: education.filter(e => e.institution || e.degree),
+                      experience: experience.filter(e => e.title || e.company),
+                      skills,
+                      projects: projects.filter(p => p.name || p.description),
+                      certifications,
+                      customSections,
+                      template: 'resume-template-two-side',
+                      sectionOrder: sections,
+                      isDynamic: true,
+                      resumeFormat: 'two-side'
+                    };
+                    
+                    // Check payload size
+                    const payloadSize = new Blob([JSON.stringify(resumeData)]).size;
+                    const payloadSizeMB = payloadSize / (1024 * 1024);
+                    console.log(`Payload size: ${payloadSizeMB.toFixed(2)} MB`);
+                    
+                    if (payloadSizeMB > 45) {
+                      setErrorMessage('Resume data is too large. Please use a smaller photo or reduce content.');
+                      setTimeout(() => setErrorMessage(null), 5000);
+                      setSaving(false);
+                      return;
+                    }
+                    
+                    // Include resumeId if editing
+                    const saveData = isEditMode && editingResumeId 
+                      ? { ...resumeData, resumeId: editingResumeId }
+                      : resumeData;
+                    
+                    const response = await saveResume(saveData);
+                    
+                    if (response.success) {
+                      setSuccessMessage('Resume saved successfully!');
+                      setShowSaveDialog(false);
+                      setResumeName('');
+                      setTimeout(() => {
+                        navigate('/profile');
+                      }, 1500);
+                    }
+                  } catch (error) {
+                    const errMsg = error instanceof Error ? error.message : 'Unknown error';
+                    setErrorMessage('Failed to save resume: ' + errMsg);
+                    setTimeout(() => setErrorMessage(null), 5000);
+                  } finally {
+                    setSaving(false);
+                  }
                 }}
-                disabled={!resumeName.trim()}
+                disabled={!resumeName.trim() || saving}
                 className="flex-1 px-4 py-2 text-white bg-green-500 rounded-lg hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Save
+                {saving ? 'Saving...' : 'Save'}
               </button>
             </div>
           </div>
