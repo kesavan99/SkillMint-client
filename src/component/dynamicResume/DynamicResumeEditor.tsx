@@ -695,25 +695,17 @@ const DynamicResumeEditor: React.FC = () => {
                 <span className="text-lg sm:text-xl">📄</span>
                 <span className="text-sm font-medium sm:text-base">Content</span>
               </button>
-              
-              <button
-                onClick={() => setActiveTab('customize')}
-                className={`flex items-center gap-1 pb-4 border-b-2 transition-colors whitespace-nowrap sm:gap-2 ${
-                  activeTab === 'customize'
-                    ? 'border-green-500 text-gray-900'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
-                }`}
-              >
-                <span className="text-lg sm:text-xl">🎨</span>
-                <span className="text-sm font-medium sm:text-base">Customize</span>
-              </button>
             </div>
 
             {/* Right side actions */}
             <div className="flex items-center gap-2 sm:gap-4">
-              <select className="px-2 py-2 text-sm text-white bg-green-500 border border-green-500 rounded-lg sm:px-4 sm:text-base focus:outline-none focus:ring-2 focus:ring-green-600 hover:bg-green-600">
-                <option>Resume 1</option>
-              </select>
+              <button
+                  onClick={() => navigate('/dynamic-resume-builder')}
+                  className="px-3 py-2 text-sm text-gray-700 border border-gray-300 rounded-lg sm:px-4 hover:bg-gray-50"
+              >
+                <span className="hidden sm:inline">Back</span>
+                <span className="sm:hidden">←</span>
+              </button>
               
               <button 
                 onClick={() => setShowAIAnalysis(true)}
@@ -1229,13 +1221,7 @@ const DynamicResumeEditor: React.FC = () => {
                 </div>
               </div>
             )}
-
-            {activeTab === 'customize' && (
-              <div className="p-4 bg-white shadow-sm sm:p-6 rounded-xl">
-                <h3 className="mb-3 text-base font-semibold text-gray-800 sm:mb-4 sm:text-lg">Customize Appearance</h3>
-                <p className="text-xs text-gray-600 sm:text-sm">Customization options coming soon...</p>
-              </div>
-            )}
+            
           </div>
 
           {/* Right Panel - Live Preview */}
@@ -1255,7 +1241,7 @@ const DynamicResumeEditor: React.FC = () => {
                   <div className="text-xs">
                     {personalInfo.phone || 'Phone'} | {personalInfo.email || 'Email'}
                     {personalInfo.linkedin && (
-                      <> | <a href={personalInfo.linkedin} className="text-blue-600">LinkedIn</a></>
+                      <> | <a href={personalInfo.linkedin} >LinkedIn</a></>
                     )}
                   </div>
                 </div>

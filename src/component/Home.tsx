@@ -22,7 +22,7 @@ const Home: React.FC = () => {
             <h1 className="mb-6 text-4xl font-bold text-gray-900 md:text-5xl lg:text-6xl">
               Build Your Professional Resume
             </h1>
-            <p className="mb-8 text-lg text-gray-700 md:text-xl">
+            <p className="mb-8 text-lg text-white text-gray-700 md:text-xl">
               Create stunning resumes with AI-powered tools, multiple templates, and intelligent job search integration.
             </p>
             <div className="flex flex-col justify-center gap-4 sm:flex-row">

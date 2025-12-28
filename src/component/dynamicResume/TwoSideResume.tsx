@@ -4,6 +4,8 @@ import Navbar from '../Navbar';
 import html2pdf from 'html2pdf.js';
 import axios from 'axios';
 import { saveResume, getResumeById } from '../../client-configuration/resume-API';
+import ColorCustomize from './ColorCustomize';
+import AIAnalysisDialog from '../AIAnalysisDialog';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -91,7 +93,10 @@ const TwoSideResume: React.FC = () => {
   const [saving, setSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [leftSideColor, setLeftSideColor] = useState("#2C5F7C");
 
+  const leftSidePanelcolors = ['#79C9C5','#85409D','#4D2B8C','#F16D34','#BDE8F5','#FFA240','#D73535']
+  
   // Section ordering
   const [sections, setSections] = useState<Section[]>([
     { id: '1', name: 'Profile Summary', type: 'profile', enabled: true },
@@ -481,6 +486,38 @@ const TwoSideResume: React.FC = () => {
     }
   };
 
+  // Prepare resume data for AI analysis
+  const getResumeDataForAnalysis = () => {
+    return {
+      personalInfo: {
+        ...personalInfo,
+        location: '', // Not in TwoSide builder
+        linkedin: personalInfo.linkedin || '',
+        portfolio: ''
+      },
+      summary,
+      education: education.map(edu => ({
+        degree: edu.degree,
+        institution: edu.institution,
+        year: edu.year,
+        gpa: ''
+      })),
+      experience: experience.map(exp => ({
+        title: exp.title,
+        company: exp.company,
+        duration: exp.duration,
+        description: exp.description
+      })),
+      skills,
+      projects: projects.map(proj => ({
+        name: proj.name,
+        description: proj.description,
+        technologies: proj.technologies
+      })),
+      certifications
+    };
+  };
+
   const handleDownloadPDF = async () => {
     if (!previewRef.current) return;
 
@@ -669,13 +706,13 @@ const TwoSideResume: React.FC = () => {
       
       {/* Success Message Banner */}
       {successMessage && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+        <div className="fixed z-50 w-full max-w-md mx-4 transform -translate-x-1/2 top-4 left-1/2">
           <div className="p-4 bg-green-100 border border-green-400 rounded-lg shadow-lg">
             <div className="flex items-center gap-3">
-              <svg className="w-6 h-6 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="flex-shrink-0 w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-green-800 font-medium">{successMessage}</p>
+              <p className="font-medium text-green-800">{successMessage}</p>
               <button
                 onClick={() => setSuccessMessage(null)}
                 className="ml-auto text-green-600 hover:text-green-800"
@@ -691,13 +728,13 @@ const TwoSideResume: React.FC = () => {
 
       {/* Error Message Banner */}
       {errorMessage && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 max-w-md w-full mx-4">
+        <div className="fixed z-50 w-full max-w-md mx-4 transform -translate-x-1/2 top-4 left-1/2">
           <div className="p-4 bg-red-100 border border-red-400 rounded-lg shadow-lg">
             <div className="flex items-center gap-3">
-              <svg className="w-6 h-6 text-red-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="flex-shrink-0 w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-red-800 font-medium">{errorMessage}</p>
+              <p className="font-medium text-red-800">{errorMessage}</p>
               <button
                 onClick={() => setErrorMessage(null)}
                 className="ml-auto text-red-600 hover:text-red-800"
@@ -764,10 +801,6 @@ const TwoSideResume: React.FC = () => {
                 <span className="sm:hidden">←</span>
               </button>
 
-              <select className="px-2 py-2 text-sm text-white bg-green-500 border border-green-500 rounded-lg sm:px-4 sm:text-base focus:outline-none focus:ring-2 focus:ring-green-600 hover:bg-green-600">
-                <option>Resume 1</option>
-              </select>
-              
               <button 
                 onClick={() => setShowAIAnalysis(true)}
                 className="flex items-center gap-1 px-3 py-2 text-sm text-white bg-purple-500 rounded-lg sm:gap-2 sm:px-4 hover:bg-purple-600"
@@ -907,24 +940,28 @@ const TwoSideResume: React.FC = () => {
               <div className="space-y-4">
                 <input
                   type="text"
+                  placeholder="Name"
                   value={personalInfo.name}
                   onChange={(e) => setPersonalInfo({ ...personalInfo, name: e.target.value })}
                   className="w-full px-4 py-2 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <input
                   type="email"
+                  placeholder="email"
                   value={personalInfo.email}
                   onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
                   className="w-full px-4 py-2 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <input
                   type="tel"
+                  placeholder="Phone no"
                   value={personalInfo.phone}
                   onChange={(e) => setPersonalInfo({ ...personalInfo, phone: e.target.value })}
                   className="w-full px-4 py-2 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <input
                   type="url"
+                  placeholder="LinkedIn URL"
                   value={personalInfo.linkedin}
                   onChange={(e) => setPersonalInfo({ ...personalInfo, linkedin: e.target.value })}
                   className="w-full px-4 py-2 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -1275,7 +1312,13 @@ const TwoSideResume: React.FC = () => {
             {activeTab === 'customize' && (
               <div className="p-4 bg-white shadow-sm sm:p-6 rounded-xl">
                 <h3 className="mb-3 text-base font-semibold text-gray-800 sm:mb-4 sm:text-lg">Customize Your Resume</h3>
-                <p className="text-sm text-gray-600">Customization options will be available here soon!</p>
+                <p className="mb-4 text-xs text-gray-600 sm:text-sm">Choose a color for the left side panel</p>
+
+                <ColorCustomize
+                  leftSidePanelcolors={leftSidePanelcolors}
+                  leftSideColor={leftSideColor}
+                  setLeftSideColor={setLeftSideColor}
+                />
               </div>
             )}
           </div>
@@ -1293,9 +1336,8 @@ const TwoSideResume: React.FC = () => {
               }}>
                 {/* Left Sidebar */}
                 <div style={{
-                  width: '280px',
-                  minWidth: '280px',
-                  background: '#2c5f7c',
+                  minWidth: '35%',
+                  background: leftSideColor,
                   color: '#fff',
                   padding: '40px 30px'
                 }}>
@@ -1348,7 +1390,7 @@ const TwoSideResume: React.FC = () => {
                       {personalInfo.linkedin && (
                         <div style={{ marginBottom: '12px', wordBreak: 'break-all' }}>
                           <div style={{ opacity: '0.8', marginBottom: '3px' }}>LinkedIn:</div>
-                          <a href={personalInfo.linkedin} style={{ color: '#fff', textDecoration: 'underline' }}>
+                          <a href={personalInfo.linkedin} style={{ color: '#fff' }}>
                             Profile
                           </a>
                         </div>
@@ -1484,28 +1526,12 @@ const TwoSideResume: React.FC = () => {
         </div>
       )}
 
-      {/* AI Analysis Dialog Placeholder */}
-      {showAIAnalysis && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50">
-          <div className="w-full max-w-2xl p-6 bg-white rounded-lg shadow-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">🤖 AI Resume Analysis</h3>
-              <button
-                onClick={() => setShowAIAnalysis(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="p-6 text-center rounded-lg bg-gray-50">
-              <p className="text-gray-600">AI Analysis feature coming soon!</p>
-              <p className="mt-2 text-sm text-gray-500">Get intelligent feedback on your resume content and formatting.</p>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* AI Analysis Dialog */}
+      <AIAnalysisDialog
+        isOpen={showAIAnalysis}
+        onClose={() => setShowAIAnalysis(false)}
+        resumeData={getResumeDataForAnalysis()}
+      />
 
       {/* Custom Section Dialog */}
       {showCustomSectionDialog && (
