@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './Navbar';
 import { jobSearchAPI } from '../client-configuration/job-API';
+import { getSavedResumes } from '../client-configuration/resume-API';
 import { useTranslation } from '../locales';
 
 interface JobSearchForm {
@@ -8,6 +9,16 @@ interface JobSearchForm {
   experienceLevel: string;
   location: string;
   jobType: string;
+  resumeId: string;
+}
+
+interface Resume {
+  id: string;
+  resumeId: string;
+  resumeName?: string;
+  generatedDate?: string;
+  templateName?: string;
+  isDynamic?: boolean;
 }
 
 interface Job {
@@ -22,6 +33,14 @@ interface Job {
   source?: string;
   postedDate?: string;
   url?: string;
+  atsScore?: number;
+  atsAnalysis?: {
+    overall_match_percentage: number;
+    matched_skills: string[];
+    missing_skills: string[];
+    feedback: string[];
+    recommendations: string[];
+  };
 }
 
 interface LocationSuggestion {
@@ -37,8 +56,11 @@ const JobSearch: React.FC = () => {
     experienceLevel: '',
     location: '',
     jobType: '',
+    resumeId: '',
   });
 
+  const [resumes, setResumes] = useState<Resume[]>([]);
+  const [loadingResumes, setLoadingResumes] = useState(false);
   const [searchResults, setSearchResults] = useState<Job[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,6 +69,25 @@ const JobSearch: React.FC = () => {
   const [isRemoteSelected, setIsRemoteSelected] = useState(false);
   const locationInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Fetch saved resumes on component mount
+  useEffect(() => {
+    const fetchResumes = async () => {
+      setLoadingResumes(true);
+      try {
+        const response = await getSavedResumes();
+        if (response.success) {
+          setResumes(response.data || []);
+        }
+      } catch (error) {
+        console.error('Error fetching resumes:', error);
+      } finally {
+        setLoadingResumes(false);
+      }
+    };
+
+    fetchResumes();
+  }, []);
 
   const experienceLevels = Array.from({ length: 31 }, (_, i) => i);
 
@@ -122,31 +163,80 @@ const JobSearch: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!formData.resumeId) {
+      setError('Please select a resume for ATS analysis');
+      return;
+    }
+    
     setIsSearching(true);
     setError(null);
     setSearchResults([]); // Clear previous results
     
     try {
+      // Step 1: Start job search and get task ID
       const response = await jobSearchAPI.searchJobs({
         role: formData.role,
         designation: formData.role,
         experienceLevel: formData.experienceLevel,
         location: formData.location,
         jobType: formData.jobType,
+        resumeId: formData.resumeId,
       });
 
-      if (response.success) {
-        setSearchResults(response.data || []);
+      if (response.success && response.taskId) {
+        // Step 2: Start polling for results
+        pollJobSearchResults(response.taskId);
       } else {
         setError(t('jobSearch.noJobsFound'));
         setSearchResults([]);
+        setIsSearching(false);
       }
     } catch (err) {
       console.error('Error during job search:', err);
+      setError('Failed to start job search');
       setSearchResults([]);
-    } finally {
       setIsSearching(false);
     }
+  };
+
+  const pollJobSearchResults = async (taskId: string) => {
+    const pollInterval = setInterval(async () => {
+      try {
+        const response = await jobSearchAPI.pollJobSearch(taskId);
+        
+        if (response.success) {
+          // Update results incrementally
+          setSearchResults(response.jobs || []);
+          
+          // Check if completed
+          if (response.completed) {
+            clearInterval(pollInterval);
+            setIsSearching(false);
+            
+            if (response.status === 'failed') {
+              setError(response.error || 'Job search failed');
+            }
+            
+            console.log(`✅ Job search completed: ${response.processedJobs} jobs analyzed`);
+          } else {
+            console.log(`📊 Progress: ${response.processedJobs}/${response.totalJobs} jobs (${response.progress}%)`);
+          }
+        }
+      } catch (err) {
+        console.error('Error polling job search:', err);
+        clearInterval(pollInterval);
+        setIsSearching(false);
+        setError('Failed to retrieve job search results');
+      }
+    }, 2000); // Poll every 2 seconds
+
+    // Timeout after 2 minutes
+    setTimeout(() => {
+      clearInterval(pollInterval);
+      setIsSearching(false);
+      setError('Job search timeout - please try again');
+    }, 120000);
   };
 
   const handleReset = () => {
@@ -155,6 +245,7 @@ const JobSearch: React.FC = () => {
       experienceLevel: '',
       location: '',
       jobType: '',
+      resumeId: '',
     });
     setSearchResults([]);
     setError(null);
@@ -176,7 +267,36 @@ const JobSearch: React.FC = () => {
             {/* Search Form */}
             <div className="p-6 mb-8 bg-white shadow-xl md:p-8 rounded-2xl">
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="md:col-span-2">
+                  <label htmlFor="resumeId" className="block mb-2 text-sm font-semibold text-gray-700">
+                    Select Resume for ATS Analysis <span className="text-red-500">{t('jobSearch.required')}</span>
+                  </label>
+                  <select
+                    id="resumeId"
+                    name="resumeId"
+                    value={formData.resumeId}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 text-gray-900 transition-all bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    required
+                    disabled={loadingResumes}
+                  >
+                    <option value="">
+                      {loadingResumes ? 'Loading resumes...' : 'Select a resume'}
+                    </option>
+                    {resumes.map((resume) => (
+                      <option key={resume.id} value={resume.id}>
+                        {resume.resumeName} 
+                      </option>
+                    ))}
+                  </select>
+                  {resumes.length === 0 && !loadingResumes && (
+                    <p className="mt-2 text-sm text-amber-600">
+                      ⚠️ No resumes found. Please create a resume first.
+                    </p>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                   <label htmlFor="role" className="block mb-2 text-sm font-semibold text-gray-700">
                     {t('jobSearch.roleLabel')} <span className="text-red-500">{t('jobSearch.required')}</span>
@@ -391,6 +511,22 @@ const JobSearch: React.FC = () => {
                     className="p-5 transition-all border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-200"
                   >
                     <div className="flex flex-col gap-4">
+                      {/* ATS Score Badge */}
+                      {job.atsScore !== undefined && job.atsScore !== null && (
+                        <div className="flex items-center gap-2">
+                          <div className={`px-4 py-2 rounded-full font-bold text-sm ${
+                            job.atsScore >= 80 ? 'bg-green-100 text-green-800' :
+                            job.atsScore >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            🎯 ATS Match: {job.atsScore.toFixed(1)}%
+                          </div>
+                          {job.atsScore >= 75 && (
+                            <span className="text-xs font-semibold text-green-600">⭐ Strong Match</span>
+                          )}
+                        </div>
+                      )}
+
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <h3 className="mb-2 text-xl font-semibold text-gray-800">{job.title}</h3>
@@ -410,6 +546,60 @@ const JobSearch: React.FC = () => {
                           </a>
                         )}
                       </div>
+
+                      {/* ATS Analysis Details */}
+                      {job.atsAnalysis && (
+                        <div className="p-4 mt-2 space-y-3 border-t border-gray-200 bg-gray-50 rounded-xl">
+                          <h4 className="font-semibold text-gray-800">📊 ATS Analysis</h4>
+                          
+                          {job.atsAnalysis.matched_skills.length > 0 && (
+                            <div>
+                              <p className="mb-2 text-sm font-medium text-green-700">✅ Matched Skills:</p>
+                              <div className="flex flex-wrap gap-1">
+                                {job.atsAnalysis.matched_skills.slice(0, 5).map((skill, idx) => (
+                                  <span key={idx} className="px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">
+                                    {skill}
+                                  </span>
+                                ))}
+                                {job.atsAnalysis.matched_skills.length > 5 && (
+                                  <span className="px-2 py-1 text-xs font-medium text-gray-600">
+                                    +{job.atsAnalysis.matched_skills.length - 5} more
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {job.atsAnalysis.missing_skills.length > 0 && (
+                            <div>
+                              <p className="mb-2 text-sm font-medium text-amber-700">⚠️ Missing Skills:</p>
+                              <div className="flex flex-wrap gap-1">
+                                {job.atsAnalysis.missing_skills.slice(0, 5).map((skill, idx) => (
+                                  <span key={idx} className="px-2 py-1 text-xs font-medium rounded-full text-amber-800 bg-amber-100">
+                                    {skill}
+                                  </span>
+                                ))}
+                                {job.atsAnalysis.missing_skills.length > 5 && (
+                                  <span className="px-2 py-1 text-xs font-medium text-gray-600">
+                                    +{job.atsAnalysis.missing_skills.length - 5} more
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+
+                          {job.atsAnalysis.recommendations && job.atsAnalysis.recommendations.length > 0 && (
+                            <div>
+                              <p className="mb-2 text-sm font-medium text-blue-700">💡 Recommendations:</p>
+                              <ul className="space-y-1 text-xs text-gray-700 list-disc list-inside">
+                                {job.atsAnalysis.recommendations.slice(0, 2).map((rec, idx) => (
+                                  <li key={idx}>{rec}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      )}
                       <div className="flex flex-wrap gap-2 text-sm">
                         {job.location && (
                           <span className="px-3 py-1 text-gray-700 bg-gray-100 rounded-full">

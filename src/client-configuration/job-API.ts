@@ -17,6 +17,7 @@ export const jobSearchAPI = {
     experienceLevel?: string;
     location?: string;
     jobType?: string;
+    resumeId?: string;
   }) => {
     try {
       const response = await authenticatedFetch(`${API_BASE}/search`, {
@@ -32,6 +33,27 @@ export const jobSearchAPI = {
       return await response.json();
     } catch (error: any) {
       console.error('Job search API error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Poll job search progress
+   */
+  pollJobSearch: async (taskId: string) => {
+    try {
+      const response = await authenticatedFetch(`${API_BASE}/search/poll/${taskId}`, {
+        method: 'GET'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to poll job search');
+      }
+
+      return await response.json();
+    } catch (error: any) {
+      console.error('Job search poll API error:', error);
       throw error;
     }
   },
