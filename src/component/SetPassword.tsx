@@ -2,10 +2,12 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { auth } from '../config/firebase';
 import { applyActionCode } from 'firebase/auth';
+import { useTranslation } from '../locales';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const SetPassword = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const mode = searchParams.get('mode');
@@ -33,12 +35,12 @@ const SetPassword = () => {
           
           setVerifying(false);
         } catch (err: any) {
-          setError('Invalid or expired verification link.');
+          setError(t('auth.invalidVerificationLink'));
           setVerifying(false);
         }
       } else {
         setVerifying(false);
-        setError('Invalid verification link.');
+        setError(t('auth.invalidLink'));
       }
     };
 
@@ -50,17 +52,17 @@ const SetPassword = () => {
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError(t('auth.passwordMismatch'));
       return;
     }
 
     if (password.length < 6) {
-      setError('Password must be at least 6 characters long.');
+      setError(t('auth.passwordTooShort'));
       return;
     }
 
     if (!email) {
-      setError('Email is missing. Please use the link from your email.');
+      setError(t('auth.emailMissing'));
       return;
     }
 
@@ -85,10 +87,10 @@ const SetPassword = () => {
           navigate('/login');
         }, 2000);
       } else {
-        setError(data.message || 'Failed to set password. Please try again.');
+        setError(data.message || t('auth.passwordSetFailedMessage'));
       }
     } catch (err) {
-      setError('An unexpected error occurred.');
+      setError(t('auth.unexpectedError'));
     } finally {
       setLoading(false);
     }
@@ -104,10 +106,10 @@ const SetPassword = () => {
             </div>
           </div>
           <h2 className="text-2xl font-bold mb-4" style={{ color: '#19B86B' }}>
-            Verifying Your Email...
+            {t('auth.verifyingEmailTitle')}
           </h2>
           <p className="text-gray-700">
-            Please wait while we verify your email address.
+            {t('auth.verifyingEmailMessage')}
           </p>
         </div>
       </div>
@@ -134,14 +136,14 @@ const SetPassword = () => {
             </svg>
           </div>
           <h2 className="text-3xl font-bold mb-4 text-red-600">
-            Verification Failed
+            {t('auth.verificationFailedTitle')}
           </h2>
           <p className="text-gray-700 mb-6">{error}</p>
           <button
             onClick={() => navigate('/login')}
             className="w-full btn btn-primary"
           >
-            Back to Login
+            {t('auth.backToLogin')}
           </button>
         </div>
       </div>
@@ -168,10 +170,10 @@ const SetPassword = () => {
             </svg>
           </div>
           <h2 className="text-3xl font-bold mb-4" style={{ color: '#19B86B' }}>
-            Account Verified!
+            {t('auth.accountVerifiedTitle')}
           </h2>
           <p className="text-gray-700">
-            Your account has been successfully verified. Redirecting to login...
+            {t('auth.accountVerifiedMessage')}
           </p>
         </div>
       </div>
@@ -186,10 +188,10 @@ const SetPassword = () => {
             <img src="/logo.png" alt="SkillMint Logo" className="h-12" style={{ width: 'auto' }} />
           </div>
           <h2 className="text-3xl font-bold" style={{ color: '#19B86B' }}>
-            Set Your Password
+            {t('auth.setPasswordTitle')}
           </h2>
           <p className="text-sm text-gray-600 mt-2">
-            Complete your registration by setting a password
+            {t('auth.setPasswordSubtitle')}
           </p>
         </div>
 
@@ -205,7 +207,7 @@ const SetPassword = () => {
               htmlFor="email"
               className="text-sm font-medium text-gray-700"
             >
-              Email
+              {t('auth.emailLabel')}
             </label>
             <input
               type="email"
@@ -221,14 +223,14 @@ const SetPassword = () => {
               htmlFor="password"
               className="text-sm font-medium text-gray-700"
             >
-              Password
+              {t('auth.passwordLabel')}
             </label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder={t('auth.passwordPlaceholder')}
               required
               disabled={loading}
               minLength={6}
@@ -241,14 +243,14 @@ const SetPassword = () => {
               htmlFor="confirmPassword"
               className="text-sm font-medium text-gray-700"
             >
-              Confirm Password
+              {t('auth.confirmPasswordLabel')}
             </label>
             <input
               type="password"
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Confirm your password"
+              placeholder={t('auth.confirmPasswordPlaceholder')}
               required
               disabled={loading}
               minLength={6}
@@ -261,7 +263,7 @@ const SetPassword = () => {
             className="mt-3 btn btn-primary"
             disabled={loading}
           >
-            {loading ? 'Verifying...' : 'Set Password & Activate Account'}
+            {loading ? t('auth.verifying') : t('auth.setPasswordActivate')}
           </button>
         </form>
 
@@ -272,7 +274,7 @@ const SetPassword = () => {
             style={{ color: '#19B86B' }}
             onClick={() => navigate('/login')}
           >
-            Back to Login
+            {t('auth.backToLogin')}
           </button>
         </div>
       </div>

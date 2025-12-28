@@ -4,12 +4,14 @@ import axios from 'axios';
 import html2pdf from 'html2pdf.js';
 import { getResumeById } from '../client-configuration/resume-API';
 import Navbar from './Navbar';
+import { useTranslation } from '../locales';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ResumeView: React.FC = () => {
   const { resumeId } = useParams<{ resumeId: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [previewHTML, setPreviewHTML] = useState<string>('');
   const [resumeName, setResumeName] = useState<string>('');
   const [templateName, setTemplateName] = useState<string>('');
@@ -46,7 +48,7 @@ const ResumeView: React.FC = () => {
         setPreviewHTML(htmlResponse.data);
       }
     } catch (error) {
-      alert('Failed to load resume. Redirecting to profile...');
+      alert(t('resumeView.failedToLoad'));
       navigate('/profile');
     } finally {
       setLoading(false);
@@ -79,7 +81,7 @@ const ResumeView: React.FC = () => {
 
       await html2pdf().set(opt).from(element).save();
     } catch (error) {
-      alert('Failed to generate PDF');
+      alert(t('resumeView.failedToGeneratePDF'));
     } finally {
       setDownloading(false);
     }
@@ -101,7 +103,7 @@ const ResumeView: React.FC = () => {
         <div className="flex items-center justify-center min-h-screen">
           <div className="p-12 text-center bg-white rounded-lg shadow-lg">
             <div className="w-16 h-16 mx-auto mb-4 border-b-2 rounded-full animate-spin border-primary-600"></div>
-            <p className="text-lg text-gray-600">Loading resume...</p>
+            <p className="text-lg text-gray-600">{t('resumeView.loading')}</p>
           </div>
         </div>
       </div>
@@ -116,7 +118,7 @@ const ResumeView: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="mb-2 text-xl font-bold text-gray-900 md:text-3xl">{resumeName}</h1>
-          <p className="text-sm text-gray-600 md:text-base">Template: {templateName}</p>
+          <p className="text-sm text-gray-600 md:text-base">{t('resumeView.templateLabel')}{templateName}</p>
         </div>
 
         {/* Action Buttons */}
@@ -125,14 +127,14 @@ const ResumeView: React.FC = () => {
             onClick={handleEdit}
             className="w-full px-4 py-2 text-base font-semibold text-white transition-colors rounded-lg md:w-auto md:px-6 md:py-3 bg-primary-600 hover:bg-primary-700"
           >
-            ✏️ Edit Resume
+            {t('resumeView.editResume')}
           </button>
           <button
             onClick={handleDownloadPDF}
             disabled={downloading}
             className="w-full px-4 py-2 text-base font-semibold text-white transition-colors bg-green-600 rounded-lg md:w-auto md:px-6 md:py-3 hover:bg-green-700 disabled:bg-gray-400"
           >
-            {downloading ? 'Generating...' : '📥 Download PDF'}
+            {downloading ? t('resumeView.generating') : t('resumeView.downloadPDF')}
           </button>
         </div>
 

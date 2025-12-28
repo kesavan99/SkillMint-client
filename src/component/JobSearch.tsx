@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './Navbar';
 import { jobSearchAPI } from '../client-configuration/job-API';
+import { useTranslation } from '../locales';
 
 interface JobSearchForm {
   role: string;
@@ -30,6 +31,7 @@ interface LocationSuggestion {
 }
 
 const JobSearch: React.FC = () => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<JobSearchForm>({
     role: '',
     experienceLevel: '',
@@ -49,11 +51,11 @@ const JobSearch: React.FC = () => {
   const experienceLevels = Array.from({ length: 31 }, (_, i) => i);
 
   const jobTypes = [
-    'Full-time',
-    'Part-time',
-    'Contract',
-    'Internship',
-    'Freelance',
+    t('jobSearch.fullTime'),
+    t('jobSearch.partTime'),
+    t('jobSearch.contract'),
+    t('jobSearch.internship'),
+    t('jobSearch.freelance'),
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -136,7 +138,7 @@ const JobSearch: React.FC = () => {
       if (response.success) {
         setSearchResults(response.data || []);
       } else {
-        setError('No jobs found. Please try different search criteria.');
+        setError(t('jobSearch.noJobsFound'));
         setSearchResults([]);
       }
     } catch (err) {
@@ -165,8 +167,8 @@ const JobSearch: React.FC = () => {
 
       <main className="px-5 py-16 mx-auto max-w-7xl">
         <div className="mb-8 text-center">
-          <h1 className="mb-3 text-3xl font-bold text-white md:text-4xl">🔍 Job Search</h1>
-          <p className="text-lg text-white/90">Find your dream job by entering your preferences</p>
+          <h1 className="mb-3 text-3xl font-bold text-white md:text-4xl">{t('jobSearch.title')}</h1>
+          <p className="text-lg text-white/90">{t('jobSearch.subtitle')}</p>
         </div>
 
         <div className="flex flex-col gap-6">
@@ -177,7 +179,7 @@ const JobSearch: React.FC = () => {
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div>
                   <label htmlFor="role" className="block mb-2 text-sm font-semibold text-gray-700">
-                    Role / Job Title <span className="text-red-500">*</span>
+                    {t('jobSearch.roleLabel')} <span className="text-red-500">{t('jobSearch.required')}</span>
                   </label>
                   <input
                     type="text"
@@ -185,7 +187,7 @@ const JobSearch: React.FC = () => {
                     name="role"
                     value={formData.role}
                     onChange={handleInputChange}
-                    placeholder="e.g., Software Engineer, Java Developer"
+                    placeholder={t('jobSearch.rolePlaceholder')}
                     className="w-full px-4 py-3 text-black transition-all bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     required
                   />
@@ -193,7 +195,7 @@ const JobSearch: React.FC = () => {
 
                 <div>
                   <label htmlFor="experienceLevel" className="block mb-2 text-sm font-semibold text-gray-700">
-                    Experience Level (Years) <span className="text-red-500">*</span>
+                    {t('jobSearch.experienceLevelLabel')} <span className="text-red-500">{t('jobSearch.required')}</span>
                   </label>
                   <select
                     id="experienceLevel"
@@ -203,10 +205,10 @@ const JobSearch: React.FC = () => {
                     className="w-full px-4 py-3 text-gray-900 transition-all bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     required
                   >
-                    <option value="">Select years of experience</option>
+                    <option value="">{t('jobSearch.selectExperience')}</option>
                     {experienceLevels.map((years) => (
                       <option key={years} value={years}>
-                        {years} {years === 1 ? 'year' : 'years'}
+                        {years} {years === 1 ? t('jobSearch.year') : t('jobSearch.years')}
                       </option>
                     ))}
                   </select>
@@ -214,7 +216,7 @@ const JobSearch: React.FC = () => {
 
                 <div>
                   <label htmlFor="jobType" className="block mb-2 text-sm font-semibold text-gray-700">
-                    Job Type
+                    {t('jobSearch.jobTypeLabel')}
                   </label>
                   <select
                     id="jobType"
@@ -223,7 +225,7 @@ const JobSearch: React.FC = () => {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 text-gray-900 transition-all bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   >
-                    <option value="">Select job type</option>
+                    <option value="">{t('jobSearch.selectJobType')}</option>
                     {jobTypes.map((type) => (
                       <option key={type} value={type}>
                         {type}
@@ -234,7 +236,7 @@ const JobSearch: React.FC = () => {
 
                 <div className="relative md:col-span-2">
                   <label htmlFor="location" className="block mb-2 text-sm font-semibold text-gray-700">
-                    Location
+                    {t('jobSearch.locationLabel')}
                   </label>
                   <div className="flex gap-2 mb-2">
                     <button
@@ -258,7 +260,7 @@ const JobSearch: React.FC = () => {
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                     >
-                      🏠 Remote
+                      {t('jobSearch.remoteButton')}
                     </button>
                   </div>
                   <input
@@ -273,7 +275,7 @@ const JobSearch: React.FC = () => {
                         setShowLocationDropdown(true);
                       }
                     }}
-                    placeholder={isRemoteSelected ? 'Remote selected' : 'Or type a city name...'}
+                    placeholder={isRemoteSelected ? t('jobSearch.remoteSelected') : t('jobSearch.typeCity')}
                     className="w-full px-4 py-3 text-gray-900 transition-all bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
                     autoComplete="off"
                     disabled={isRemoteSelected}
@@ -321,10 +323,10 @@ const JobSearch: React.FC = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Searching...
+                      {t('jobSearch.searching')}
                     </span>
                   ) : (
-                    'Search Jobs'
+                    t('jobSearch.searchJobs')
                   )}
                 </button>
                 <button
@@ -332,7 +334,7 @@ const JobSearch: React.FC = () => {
                   onClick={handleReset}
                   className="px-6 py-3 font-semibold text-gray-700 transition-all bg-gray-100 rounded-lg hover:bg-gray-200"
                 >
-                  Reset
+                  {t('jobSearch.reset')}
                 </button>
               </div>
             </form>
@@ -363,8 +365,8 @@ const JobSearch: React.FC = () => {
                   <div className="absolute top-0 left-0 w-20 h-20 border-4 border-transparent rounded-full border-t-primary-600 animate-spin"></div>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-xl font-semibold text-gray-800">Retrieving the top 40+ jobs...</h3>
-                  <p className="text-sm text-gray-600">Please wait while we search across multiple pages</p>
+                  <h3 className="text-xl font-semibold text-gray-800">{t('jobSearch.retrievingJobs')}</h3>
+                  <p className="text-sm text-gray-600">{t('jobSearch.pleaseWait')}</p>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50">
                   <div className="flex gap-1">
@@ -372,7 +374,7 @@ const JobSearch: React.FC = () => {
                     <div className="w-2 h-2 rounded-full bg-primary-600 animate-bounce" style={{ animationDelay: '150ms' }}></div>
                     <div className="w-2 h-2 rounded-full bg-primary-600 animate-bounce" style={{ animationDelay: '300ms' }}></div>
                   </div>
-                  <span className="text-sm font-medium text-primary-700">Searching...</span>
+                  <span className="text-sm font-medium text-primary-700">{t('jobSearch.searchingStatus')}</span>
                 </div>
               </div>
             </div>
@@ -381,7 +383,7 @@ const JobSearch: React.FC = () => {
           {/* Search Results */}
           {searchResults.length > 0 && (
             <div className="p-6 bg-white shadow-xl md:p-8 rounded-2xl">
-              <h2 className="mb-6 text-2xl font-bold text-gray-800">Search Results</h2>
+              <h2 className="mb-6 text-2xl font-bold text-gray-800">{t('jobSearch.searchResults')}</h2>
               <div className="space-y-4">
                 {searchResults.map((job) => (
                   <div
@@ -404,7 +406,7 @@ const JobSearch: React.FC = () => {
                             rel="noopener noreferrer"
                             className="px-4 py-2 text-sm font-semibold text-white transition-all rounded-lg bg-primary-600 hover:bg-primary-700 whitespace-nowrap"
                           >
-                            Apply Now
+                            {t('jobSearch.applyNow')}
                           </a>
                         )}
                       </div>
@@ -446,7 +448,7 @@ const JobSearch: React.FC = () => {
               </div>
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600">
-                  Showing {searchResults.length} job{searchResults.length !== 1 ? 's' : ''}
+                  {t('jobSearch.showingJobs')} {searchResults.length} {searchResults.length !== 1 ? t('jobSearch.jobs') : t('jobSearch.job')}
                 </p>
               </div>
             </div>
@@ -455,8 +457,8 @@ const JobSearch: React.FC = () => {
           {searchResults.length === 0 && !isSearching && (
             <div className="p-8 text-center bg-white shadow-xl rounded-2xl">
               <div className="mb-4 text-6xl">💼</div>
-              <h3 className="mb-2 text-xl font-semibold text-gray-800">Ready to find your next opportunity?</h3>
-              <p className="text-gray-600">Fill in the form above and click "Search Jobs" to get started</p>
+              <h3 className="mb-2 text-xl font-semibold text-gray-800">{t('jobSearch.readyToFind')}</h3>
+              <p className="text-gray-600">{t('jobSearch.fillFormPrompt')}</p>
             </div>
           )}
           </div>

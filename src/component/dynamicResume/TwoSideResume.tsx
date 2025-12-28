@@ -6,6 +6,7 @@ import axios from 'axios';
 import { saveResume, getResumeById } from '../../client-configuration/resume-API';
 import ColorCustomize from './ColorCustomize';
 import AIAnalysisDialog from '../AIAnalysisDialog';
+import { useTranslation } from '../../locales';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -55,6 +56,7 @@ interface Section {
 }
 
 const TwoSideResume: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const previewRef = useRef<HTMLDivElement>(null);
@@ -837,8 +839,8 @@ const TwoSideResume: React.FC = () => {
         <div className="p-4 mb-6 bg-white shadow-sm sm:p-6 rounded-xl">
           <div className="flex flex-col gap-4 mb-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-lg font-bold text-gray-800 sm:text-xl">Quick Start</h2>
-              <p className="text-xs text-gray-600 sm:text-sm">Upload your existing resume PDF to auto-fill the form</p>
+              <h2 className="text-lg font-bold text-gray-800 sm:text-xl">{t('dynamicBuilder.quickStart')}</h2>
+              <p className="text-xs text-gray-600 sm:text-sm">{t('dynamicBuilder.uploadPrompt')}</p>
             </div>
             <label className="flex items-center justify-center w-full px-4 py-2 text-sm text-white transition-colors bg-green-500 rounded-lg cursor-pointer sm:w-auto sm:px-6 sm:py-3 hover:bg-green-600">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

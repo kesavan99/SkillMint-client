@@ -1,8 +1,10 @@
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from '../locales';
 
 const EmailVerification = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
   const email = searchParams.get('email');
   const type = searchParams.get('type') || 'verify'; // 'verify' or 'reset'
 
@@ -19,12 +21,12 @@ const EmailVerification = () => {
           <div className="flex justify-center mb-4">
             <img src="/logo.png" alt="SkillMint Logo" className="h-12" style={{ width: 'auto' }} />
           </div>
-          <h2 className="text-3xl font-bold mb-4" style={{ color: '#19B86B' }}>
-            {isPasswordReset ? 'Reset Your Password' : 'Verify Your Email'}
+          <h2 className="mb-4 text-3xl font-bold" style={{ color: '#19B86B' }}>
+            {isPasswordReset ? t('auth.resetYourPasswordTitle') : t('auth.verifyYourEmail')}
           </h2>
         </div>
 
-        <div className="text-center mb-6">
+        <div className="mb-6 text-center">
           <div className="mb-6">
             <svg 
               className="w-20 h-20 mx-auto mb-4" 
@@ -41,24 +43,24 @@ const EmailVerification = () => {
             </svg>
           </div>
           
-          <p className="text-lg text-gray-700 mb-4">
+          <p className="mb-4 text-lg text-gray-700">
             {isPasswordReset 
-              ? "We've sent a password reset link to:"
-              : "We've sent a verification link to:"}
+              ? t('auth.passwordResetLinkSent')
+              : t('auth.verificationLinkSent')}
           </p>
-          <p className="text-lg font-semibold mb-6" style={{ color: '#19B86B' }}>
-            {email || 'your email address'}
+          <p className="mb-6 text-lg font-semibold" style={{ color: '#19B86B' }}>
+            {email || t('auth.yourEmailAddress')}
           </p>
           
-          <p className="text-sm text-gray-600 mb-6">
+          <p className="mb-6 text-sm text-gray-600">
             {isPasswordReset
-              ? 'Please check your email and click the reset link to set your new password.'
-              : 'Please check your email and click the verification link to activate your account.'}
+              ? t('auth.checkEmailClickReset')
+              : t('auth.checkEmailClickVerify')}
           </p>
           
-          <div className="bg-gray-50 p-4 rounded-lg mb-6">
+          <div className="p-4 mb-6 rounded-lg bg-gray-50">
             <p className="text-sm text-gray-700">
-              <strong>Note:</strong> The {isPasswordReset ? 'reset' : 'verification'} link will expire in 24 hours.
+              <strong>{t('auth.noteLabel')}</strong> {isPasswordReset ? t('auth.resetLinkExpires') : t('auth.verificationLinkExpires')}
             </p>
           </div>
         </div>
@@ -67,18 +69,18 @@ const EmailVerification = () => {
           onClick={handleBackToLogin}
           className="w-full btn btn-primary"
         >
-          Back to Login
+          {t('auth.backToLogin')}
         </button>
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            Didn't receive the email?{' '}
+            {t('auth.didNotReceive')}{' '}
             <button 
               type="button" 
               className="font-semibold transition-colors duration-200 hover:underline"
               style={{ color: '#19B86B' }}
             >
-              Resend
+              {t('auth.resend')}
             </button>
           </p>
         </div>

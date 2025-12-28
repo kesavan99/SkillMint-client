@@ -2,10 +2,12 @@ import React, { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import OptimizedImage from './OptimizedImage';
+import { useTranslation } from '../locales';
 
 const DynamicResumeBuilder: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
 
   // If format and resumeId are in URL, redirect to appropriate editor
   useEffect(() => {
@@ -30,10 +32,10 @@ const DynamicResumeBuilder: React.FC = () => {
           {/* Heading Section */}
           <div className="mb-12 text-center">
             <h1 className="mb-3 text-4xl font-bold text-gray-900">
-              Start building your resume
+              {t('dynamicBuilder.startBuilding')}
             </h1>
             <p className="text-xl text-gray-600">
-              Choose a design you like. You can customize or switch it later.
+              {t('dynamicBuilder.chooseDesign')}
             </p>
           </div>
 
@@ -46,7 +48,7 @@ const DynamicResumeBuilder: React.FC = () => {
               >
                 <OptimizedImage
                   src="/resume-1.png" 
-                  alt="Resume Template 1" 
+                  alt={t('dynamicBuilder.resumeTemplate1Alt')} 
                   width={600}
                   quality={85}
                   fit="contain"
@@ -55,8 +57,8 @@ const DynamicResumeBuilder: React.FC = () => {
               </div>
               
               <div className="mt-3 text-center">
-                <p className="text-sm font-medium text-gray-700">Classic Template</p>
-                <p className="mt-1 text-xs text-gray-500">Professional & Clean</p>
+                <p className="text-sm font-medium text-gray-700">{t('dynamicBuilder.classicTemplate')}</p>
+                <p className="mt-1 text-xs text-gray-500">{t('dynamicBuilder.classicTemplateDesc')}</p>
               </div>
             </div>
 
@@ -68,7 +70,7 @@ const DynamicResumeBuilder: React.FC = () => {
               >
                 <OptimizedImage
                   src="/resume-2.png" 
-                  alt="Resume Template 2" 
+                  alt={t('dynamicBuilder.resumeTemplate2Alt')} 
                   width={600}
                   quality={85}
                   fit="contain"
@@ -77,16 +79,16 @@ const DynamicResumeBuilder: React.FC = () => {
               </div>
               
               <div className="mt-3 text-center">
-                <p className="text-sm font-medium text-gray-700">Modern Template</p>
-                <p className="mt-1 text-xs text-gray-500">Contemporary & Bold</p>
+                <p className="text-sm font-medium text-gray-700">{t('dynamicBuilder.modernTemplate')}</p>
+                <p className="mt-1 text-xs text-gray-500">{t('dynamicBuilder.modernTemplateDesc')}</p>
               </div>
             </div>
             
             {/* Placeholder for future templates */}
             <div className="flex flex-col items-center justify-center p-4 transition-all duration-300 bg-white border-2 border-gray-300 border-dashed shadow-lg rounded-xl hover:border-green-300 hover:shadow-xl h-96">
               <div className="mb-2 text-4xl text-gray-300">➕</div>
-              <p className="text-sm font-medium text-gray-400">More templates</p>
-              <p className="mt-1 text-xs text-gray-400">Coming soon</p>
+              <p className="text-sm font-medium text-gray-400">{t('dynamicBuilder.moreTemplates')}</p>
+              <p className="mt-1 text-xs text-gray-400">{t('dynamicBuilder.comingSoon')}</p>
             </div>
           </div>
           
@@ -95,7 +97,7 @@ const DynamicResumeBuilder: React.FC = () => {
               onClick={() => navigate('/')}
               className="px-6 py-3 text-white transition-all duration-300 bg-purple-600 rounded-lg hover:bg-purple-700"
             >
-              Back to Home
+              {t('dynamicBuilder.backToHome')}
             </button>
           </div>
         </div>

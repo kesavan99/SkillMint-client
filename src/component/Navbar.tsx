@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from "../service/authService";
 import OptimizedImage from './OptimizedImage';
+import { useTranslation } from '../locales';
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { logout, isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleLogout = () => {
     logout();
@@ -35,7 +37,7 @@ const Navbar: React.FC = () => {
         >
           <OptimizedImage
             src="/logo.png" 
-            alt="SkillMint Logo" 
+            alt={t('navbar.logoAlt')} 
             height={48}
             fit="contain"
             className="h-10 transition-transform hover:scale-105" 
@@ -49,7 +51,7 @@ const Navbar: React.FC = () => {
             onClick={() => navigate('/')}
             className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
           >
-            Home
+            {t('navbar.home')}
           </button>
           {isAuthenticated && (
             <>
@@ -57,25 +59,25 @@ const Navbar: React.FC = () => {
                 onClick={() => navigate('/resume-builder')}
                 className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
               >
-                Resume
+                {t('navbar.resume')}
               </button>
               <button 
                 onClick={() => navigate('/dynamic-resume-builder')}
                 className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
               >
-                Dynamic Resume
+                {t('navbar.dynamicResume')}
               </button>
               <button 
                 onClick={() => navigate('/profile')}
                 className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
               >
-                Profile
+                {t('navbar.profile')}
               </button>
               <button 
                 onClick={() => navigate('/job-search')}
                 className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
               >
-                Job Search
+                {t('navbar.jobSearch')}
               </button>
             </>
           )}
@@ -83,27 +85,27 @@ const Navbar: React.FC = () => {
             onClick={() => navigate('/about')}
             className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
           >
-            About
+            {t('navbar.about')}
           </button>
           <button 
             onClick={() => navigate('/contact')}
             className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
           >
-            Contact
+            {t('navbar.contact')}
           </button>
           {isAuthenticated ? (
             <button 
               onClick={handleLogout} 
               className="btn btn-primary"
             >
-              Logout
+              {t('navbar.logout')}
             </button>
           ) : (
             <button 
               onClick={() => navigate('/login')} 
               className="btn btn-primary"
             >
-              Login
+              {t('navbar.login')}
             </button>
           )}
         </nav>
@@ -112,7 +114,7 @@ const Navbar: React.FC = () => {
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="p-2 text-gray-700 md:hidden hover:text-primary-600"
-          aria-label="Toggle menu"
+          aria-label={t('navbar.toggleMenu')}
         >
           {mobileMenuOpen ? (
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -134,7 +136,7 @@ const Navbar: React.FC = () => {
               onClick={() => handleNavClick('/')}
               className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
             >
-              Home
+              {t('navbar.home')}
             </button>
             {isAuthenticated && (
               <>
@@ -142,25 +144,25 @@ const Navbar: React.FC = () => {
                   onClick={() => handleNavClick('/resume-builder')}
                   className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
                 >
-                  Resume
+                  {t('navbar.resume')}
                 </button>
                 <button
                   onClick={() => handleNavClick('/dynamic-resume-builder')}
                   className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
                 >
-                  Dynamic Resume
+                  {t('navbar.dynamicResume')}
                 </button>
                 <button
                   onClick={() => handleNavClick('/profile')}
                   className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
                 >
-                  Profile
+                  {t('navbar.profile')}
                 </button>
                 <button
                   onClick={() => handleNavClick('/job-search')}
                   className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
                 >
-                  Job Search
+                  {t('navbar.jobSearch')}
                 </button>
               </>
             )}
@@ -168,27 +170,27 @@ const Navbar: React.FC = () => {
               onClick={() => handleNavClick('/about')}
               className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
             >
-              About
+              {t('navbar.about')}
             </button>
             <button
               onClick={() => handleNavClick('/contact')}
               className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
             >
-              Contact
+              {t('navbar.contact')}
             </button>
             {isAuthenticated ? (
               <button
                 onClick={handleLogout}
                 className="px-4 py-3 text-base font-medium text-left text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700"
               >
-                Logout
+                {t('navbar.logout')}
               </button>
             ) : (
               <button
                 onClick={() => handleNavClick('/login')}
                 className="px-4 py-3 text-base font-medium text-left text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700"
               >
-                Login
+                {t('navbar.login')}
               </button>
             )}
           </nav>

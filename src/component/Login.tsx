@@ -2,6 +2,7 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../service/authService';
 import { signInWithGooglePopup, createUserWithEmail } from '../service/firebaseAuthService';
+import { useTranslation } from '../locales';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -9,6 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { login } = useAuth();
+  const { t } = useTranslation();
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -25,11 +27,11 @@ const Login = () => {
   useEffect(() => {
     // Check if redirected after email verification or password reset
     if (searchParams.get('verified') === 'true') {
-      setSuccess('Email verified successfully! You can now login.');
+      setSuccess(t('auth.emailVerifiedSuccess'));
     } else if (searchParams.get('reset') === 'true') {
-      setSuccess('Password reset successfully! You can now login with your new password.');
+      setSuccess(t('auth.passwordResetSuccess'));
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   const handleGoogleSignIn = async () => {
     setError('');
@@ -55,7 +57,7 @@ const Login = () => {
       const data = await response.json();
 
       if (response.status === 429) {
-        setError('Too many requests. This is a free service with rate limits. Please wait a moment and try again.');
+        setError(t('auth.tooManyRequests'));
         return;
       }
 
@@ -71,24 +73,24 @@ const Login = () => {
           window.location.href = '/';
         }
       } else {
-        setError(data.message || 'Google sign-in failed. Please try again.');
+        setError(data.message || t('auth.googleSignInFailed'));
       }
     } catch (err) {
       if (err instanceof Error) {
         // Handle rate limiting
         if (err.message.includes('Too many requests') || err.message.includes('rate limit')) {
-          setError('Too many requests. This is a free service with rate limits. Please wait a moment and try again.');
+          setError(t('auth.tooManyRequests'));
         }
         // Handle specific Firebase errors
         else if (err.message.includes('popup-closed-by-user')) {
-          setError('Sign-in cancelled. Please try again.');
+          setError(t('auth.signInCancelled'));
         } else if (err.message.includes('network-request-failed')) {
-          setError('Network error. Please check your connection.');
+          setError(t('auth.networkError'));
         } else {
-          setError('Failed to sign in with Google. Please try again.');
+          setError(t('auth.failedGoogleSignIn'));
         }
       } else {
-        setError('An unexpected error occurred with Google Sign-In.');
+        setError(t('auth.unexpectedGoogleError'));
       }
     } finally {
       setLoading(false);
@@ -118,11 +120,11 @@ const Login = () => {
         // Admin authenticated - redirect to admin home page
         window.location.href = '/admin-home';
       } else {
-        setError(data.message || 'Invalid admin credentials');
+        setError(data.message || t('auth.invalidAdminCredentials'));
       }
     } catch (err) {
       console.error(err);
-      setError('Failed to login as admin. Please try again.');
+      setError(t('auth.failedAdminLogin'));
     } finally {
       setLoading(false);
       setIsSubmitting(false);
@@ -139,13 +141,13 @@ const Login = () => {
     if (isSignUp) {
       // Validate passwords match
       if (password !== confirmPassword) {
-        setError('Passwords do not match.');
+        setError(t('auth.passwordsDoNotMatch'));
         return;
       }
 
       // Validate password length
       if (password.length < 6) {
-        setError('Password must be at least 6 characters long.');
+        setError(t('auth.passwordTooShortSignup'));
         return;
       }
 
@@ -183,20 +185,20 @@ const Login = () => {
             navigate(`/email-verification?email=${encodeURIComponent(email)}`);
           } catch (firebaseErr: any) {
             // If Firebase email fails, show error
-            setError('Failed to send verification email. Please try again or contact support.');
+            setError(t('auth.failedVerificationEmail'));
             setLoading(false);
             setIsSubmitting(false);
           }
         } else {
-          setError(data.message || 'Signup failed. Please try again.');
+          setError(data.message || t('auth.signupFailed'));
           setLoading(false);
           setIsSubmitting(false);
         }
       } catch (err: any) {
         if (err.code === 'auth/email-already-in-use') {
-          setError('This email is already registered. Please login instead.');
+          setError(t('auth.emailAlreadyRegistered'));
         } else {
-          setError('Failed to create account. Please try again.');
+          setError(t('auth.failedCreateAccount'));
         }
         setLoading(false);
         setIsSubmitting(false);
@@ -212,10 +214,10 @@ const Login = () => {
         if (success) {
           navigate('/');
         } else {
-          setError('Login failed. Please check your credentials.');
+          setError(t('auth.loginFailedCredentials'));
         }
       } catch (err) {
-        setError('An unexpected error occurred.');
+        setError(t('auth.unexpectedLoginError'));
       } finally {
         setLoading(false);
       }
@@ -232,76 +234,76 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen relative overflow-hidden" style={{ background: 'var(--bg-gradient-green)' }}>
+    <div className="relative flex flex-col min-h-screen overflow-hidden lg:flex-row" style={{ background: 'var(--bg-gradient-green)' }}>
       {/* Animated Background Shapes - Visible on all screens */}
       <div className="absolute inset-0">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-400/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-teal-400/20 rounded-full blur-2xl"></div>
+        <div className="absolute rounded-full top-20 left-20 w-72 h-72 bg-white/10 blur-3xl animate-pulse"></div>
+        <div className="absolute delay-1000 rounded-full bottom-20 right-20 w-96 h-96 bg-emerald-400/20 blur-3xl animate-pulse"></div>
+        <div className="absolute w-64 h-64 transform -translate-x-1/2 -translate-y-1/2 rounded-full top-1/2 left-1/2 bg-teal-400/20 blur-2xl"></div>
       </div>
 
       {/* Left Side - Decorative Design (Desktop Only) */}
-      <div className="hidden lg:flex lg:w-1/2 items-center justify-center relative z-10">
+      <div className="relative z-10 items-center justify-center hidden lg:flex lg:w-1/2">
         {/* Content */}
-        <div className="text-center text-white px-12">
+        <div className="px-12 text-center text-white">
           <div className="mb-8">
-            <div className="text-6xl mb-6">🎯</div>
-            <h1 className="text-5xl font-bold mb-6 leading-tight">
-              Welcome to<br/>SkillMint
+            <div className="mb-6 text-6xl">🎯</div>
+            <h1 className="mb-6 text-5xl font-bold leading-tight">
+              {t('auth.welcomeToSkillMint')}
             </h1>
-            <p className="text-xl text-green-100 leading-relaxed">
-              Build professional-level resumes in minutes and apply for job vacancies hassle-free with AI-powered tools
+            <p className="text-xl leading-relaxed text-green-100">
+              {t('auth.heroTagline')}
             </p>
           </div>
           
-          <div className="grid grid-cols-2 gap-6 mt-12 max-w-md mx-auto">
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
-              <div className="text-3xl mb-3">📝</div>
-              <p className="text-sm font-medium">Smart Resume Builder</p>
+          <div className="grid max-w-md grid-cols-2 gap-6 mx-auto mt-12">
+            <div className="p-5 border bg-white/10 backdrop-blur-sm rounded-xl border-white/20">
+              <div className="mb-3 text-3xl">📝</div>
+              <p className="text-sm font-medium">{t('auth.smartResumeBuilder')}</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
-              <div className="text-3xl mb-3">🤖</div>
-              <p className="text-sm font-medium">AI Analysis</p>
+            <div className="p-5 border bg-white/10 backdrop-blur-sm rounded-xl border-white/20">
+              <div className="mb-3 text-3xl">🤖</div>
+              <p className="text-sm font-medium">{t('auth.aiAnalysisFeature')}</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
-              <div className="text-3xl mb-3">🎨</div>
-              <p className="text-sm font-medium">Pro Templates</p>
+            <div className="p-5 border bg-white/10 backdrop-blur-sm rounded-xl border-white/20">
+              <div className="mb-3 text-3xl">🎨</div>
+              <p className="text-sm font-medium">{t('auth.proTemplates')}</p>
             </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-5 border border-white/20">
-              <div className="text-3xl mb-3">⚡</div>
-              <p className="text-sm font-medium">Instant Download</p>
+            <div className="p-5 border bg-white/10 backdrop-blur-sm rounded-xl border-white/20">
+              <div className="mb-3 text-3xl">⚡</div>
+              <p className="text-sm font-medium">{t('auth.instantDownload')}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Mobile Header - Promotional Content (Mobile Only) */}
-      <div className="lg:hidden relative z-10 text-center text-white px-6 py-12">
-        <div className="text-4xl mb-4">🎯</div>
-        <h1 className="text-3xl font-bold mb-3 leading-tight">
-          Welcome to SkillMint
+      <div className="relative z-10 px-6 py-12 text-center text-white lg:hidden">
+        <div className="mb-4 text-4xl">🎯</div>
+        <h1 className="mb-3 text-3xl font-bold leading-tight">
+          {t('auth.welcomeToSkillMint')}
         </h1>
-        <p className="text-sm text-green-100 leading-relaxed max-w-md mx-auto">
-          Build professional-level resumes in minutes and apply for job vacancies hassle-free
+        <p className="max-w-md mx-auto text-sm leading-relaxed text-green-100">
+          {t('auth.heroTaglineMobile')}
         </p>
       </div>
 
       {/* Login Form Container */}
-      <div className="flex items-center justify-center w-full lg:w-1/2 p-5 relative z-10">
+      <div className="relative z-10 flex items-center justify-center w-full p-5 lg:w-1/2">
         <div className="w-full max-w-md animate-slide-in">
           <div className="mb-8 text-center">
             <div className="flex justify-center mb-6">
               <img src="/logo.png" alt="SkillMint Logo" className="h-12" style={{ width: 'auto' }} />
             </div>
             <h2 className="text-3xl font-bold text-white">
-              {showAdminLogin ? 'Admin Login' : (isSignUp ? 'Create Account' : 'Sign In')}
+              {showAdminLogin ? t('auth.adminLogin') : (isSignUp ? t('auth.createAccount') : t('auth.signIn'))}
             </h2>
-            <p className="text-white/90 mt-2 text-sm">
-              {showAdminLogin ? 'Access admin dashboard' : (isSignUp ? 'Start building your resume today' : 'Build professional resumes in minutes')}
+            <p className="mt-2 text-sm text-white/90">
+              {showAdminLogin ? t('auth.accessAdminDashboard') : (isSignUp ? t('auth.startBuildingResume') : t('auth.buildProfessionalResumes'))}
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
+          <div className="p-8 bg-white border border-gray-100 shadow-2xl rounded-2xl">
         
         {showAdminLogin ? (
           // Admin Login Form
@@ -316,10 +318,10 @@ const Login = () => {
                   </div>
                 )}
                 <div className="flex-1">
-                  <div className="text-sm sm:text-base leading-relaxed">{error}</div>
+                  <div className="text-sm leading-relaxed sm:text-base">{error}</div>
                   {(error.includes('rate limit') || error.includes('Too many requests')) && (
                     <div className="mt-2 text-xs sm:text-sm opacity-90">
-                      ⏱️ This helps us keep the service free for everyone.
+                      {t('auth.rateLimitHelp')}
                     </div>
                   )}
                 </div>
@@ -331,14 +333,14 @@ const Login = () => {
                 htmlFor="adminUsername"
                 className="text-sm font-medium text-gray-700"
               >
-                Username
+                {t('auth.username')}
               </label>
               <input
                 type="text"
                 id="adminUsername"
                 value={adminUsername}
                 onChange={(e) => setAdminUsername(e.target.value)}
-                placeholder="Enter admin username"
+                placeholder={t('auth.enterAdminUsername')}
                 required
                 disabled={loading}
                 className="input"
@@ -350,14 +352,14 @@ const Login = () => {
                 htmlFor="adminPassword"
                 className="text-sm font-medium text-gray-700"
               >
-                Password
+                {t('auth.password')}
               </label>
               <input
                 type="password"
                 id="adminPassword"
                 value={adminPassword}
                 onChange={(e) => setAdminPassword(e.target.value)}
-                placeholder="Enter admin password"
+                placeholder={t('auth.enterAdminPassword')}
                 required
                 disabled={loading}
                 className="input"
@@ -369,7 +371,7 @@ const Login = () => {
               className="mt-3 btn btn-primary"
               disabled={loading || isSubmitting}
             >
-              {loading ? 'Signing in...' : 'Admin Sign In'}
+              {loading ? t('auth.signingIn') : t('auth.adminSignIn')}
             </button>
           </form>
         ) : (
@@ -391,10 +393,10 @@ const Login = () => {
                 </div>
               )}
               <div className="flex-1">
-                <div className="text-sm sm:text-base leading-relaxed">{error}</div>
+                <div className="text-sm leading-relaxed sm:text-base">{error}</div>
                 {(error.includes('rate limit') || error.includes('Too many requests')) && (
                   <div className="mt-2 text-xs sm:text-sm opacity-90">
-                    ⏱️ This helps us keep the service free for everyone.
+                    {t('auth.rateLimitHelp')}
                   </div>
                 )}
               </div>
@@ -407,14 +409,14 @@ const Login = () => {
                 htmlFor="name"
                 className="text-sm font-medium text-gray-700"
               >
-                Name
+                {t('auth.name')}
               </label>
               <input
                 type="text"
                 id="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter your name"
+                placeholder={t('auth.enterYourName')}
                 required
                 disabled={loading}
                 className="input"
@@ -427,14 +429,14 @@ const Login = () => {
               htmlFor="email"
               className="text-sm font-medium text-gray-700"
             >
-              Email
+              {t('auth.email')}
             </label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              placeholder={t('auth.enterYourEmail')}
               required
               disabled={loading}
               className="input"
@@ -446,14 +448,14 @@ const Login = () => {
               htmlFor="password"
               className="text-sm font-medium text-gray-700"
             >
-              Password
+              {t('auth.password')}
             </label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
+              placeholder={t('auth.enterYourPassword')}
               required
               disabled={loading}
               minLength={isSignUp ? 6 : undefined}
@@ -468,7 +470,7 @@ const Login = () => {
                 onClick={() => navigate('/forgot-password')}
                 className="text-sm text-gray-600 hover:text-gray-800 hover:underline"
               >
-                Forgot Password?
+                {t('auth.forgotPassword')}
               </button>
             </div>
           )}
@@ -479,14 +481,14 @@ const Login = () => {
                 htmlFor="confirmPassword"
                 className="text-sm font-medium text-gray-700"
               >
-                Confirm Password
+                {t('auth.confirmPassword')}
               </label>
               <input
                 type="password"
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your password"
+                placeholder={t('auth.confirmYourPassword')}
                 required
                 disabled={loading}
                 minLength={6}
@@ -501,8 +503,8 @@ const Login = () => {
             disabled={loading || isSubmitting}
           >
             {loading 
-              ? (isSignUp ? 'Creating account...' : 'Signing in...') 
-              : (isSignUp ? 'Sign Up' : 'Sign In')
+              ? (isSignUp ? t('auth.creatingAccount') : t('auth.signingIn')) 
+              : (isSignUp ? t('auth.signUp') : t('auth.signIn'))
             }
           </button>
 
@@ -511,7 +513,7 @@ const Login = () => {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 text-gray-500 bg-white">Or continue with</span>
+              <span className="px-2 text-gray-500 bg-white">{t('auth.orContinueWith')}</span>
             </div>
           </div>
 
@@ -539,14 +541,14 @@ const Login = () => {
                 d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
               />
             </svg>
-            Sign {isSignUp ? 'up' : 'in'} with Google
+            {isSignUp ? t('auth.signUpWithGoogle') : t('auth.signInWithGoogle')}
           </button>
         </form>
         )}
 
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
-            {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
+            {isSignUp ? t('auth.alreadyHaveAccount') : t('auth.dontHaveAccount')}{' '}
             <button 
               type="button" 
               className="font-semibold transition-colors duration-200 hover:underline disabled:opacity-60 disabled:cursor-not-allowed"
@@ -554,7 +556,7 @@ const Login = () => {
               onClick={toggleMode}
               disabled={loading}
             >
-              {isSignUp ? 'Sign In' : 'Sign Up'}
+              {isSignUp ? t('auth.signIn') : t('auth.signUpHere')}
             </button>
           </p>
         </div>
@@ -571,7 +573,7 @@ const Login = () => {
               }}
               className="text-xs text-gray-500 transition-colors hover:text-gray-700"
             >
-              {showAdminLogin ? '← Back to User Login' : '🔐 Admin Login'}
+              {showAdminLogin ? t('auth.backToUserLogin') : t('auth.adminLoginLink')}
             </button>
           </div>
         )}

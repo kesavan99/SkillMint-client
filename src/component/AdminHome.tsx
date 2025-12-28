@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import { useTranslation } from '../locales';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -21,6 +22,7 @@ interface User {
 }
 
 const AdminHome: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [users, setUsers] = useState<User[]>([]);
   const [totalUsers, setTotalUsers] = useState(0);
@@ -42,11 +44,11 @@ const AdminHome: React.FC = () => {
 
       if (!response.ok) {
         if (response.status === 403) {
-          setError('Access denied. Admin privileges required.');
+          setError(t('admin.accessDenied'));
           setTimeout(() => navigate('/login'), 2000);
           return;
         }
-        throw new Error('Failed to fetch users');
+        throw new Error(t('admin.failedToFetch'));
       }
 
       const data = await response.json();
@@ -56,14 +58,14 @@ const AdminHome: React.FC = () => {
         setTotalUsers(data.data.totalUsers);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to load users');
+      setError(err.message || t('admin.failedToLoad'));
     } finally {
       setLoading(false);
     }
   };
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return 'Never';
+    if (!dateString) return t('admin.neverLoggedIn');
     return new Date(dateString).toLocaleString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -86,7 +88,7 @@ const AdminHome: React.FC = () => {
         <div className="flex items-center justify-center min-h-screen">
           <div className="p-12 text-center bg-white rounded-lg shadow-lg">
             <div className="w-16 h-16 mx-auto mb-4 border-b-2 rounded-full animate-spin border-primary-600"></div>
-            <p className="text-lg text-gray-600">Loading users...</p>
+            <p className="text-lg text-gray-600">{t('admin.loadingUsers')}</p>
           </div>
         </div>
       </div>
@@ -100,8 +102,8 @@ const AdminHome: React.FC = () => {
       <main className="container px-4 py-8 mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="mb-2 text-4xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600">Manage all registered users</p>
+          <h1 className="mb-2 text-4xl font-bold text-gray-900">{t('admin.pageTitle')}</h1>
+          <p className="text-gray-600">{t('admin.pageSubtitle')}</p>
         </div>
 
         {error && (
@@ -115,7 +117,7 @@ const AdminHome: React.FC = () => {
           <div className="p-6 bg-white rounded-lg shadow-md">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Total Users</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.totalUsers')}</p>
                 <p className="text-3xl font-bold text-primary-600">{totalUsers}</p>
               </div>
               <div className="p-3 rounded-full bg-primary-100">
@@ -129,7 +131,7 @@ const AdminHome: React.FC = () => {
           <div className="p-6 bg-white rounded-lg shadow-md">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Active Users</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.activeUsers')}</p>
                 <p className="text-3xl font-bold text-green-600">
                   {users.filter(u => u.isActive).length}
                 </p>
@@ -145,7 +147,7 @@ const AdminHome: React.FC = () => {
           <div className="p-6 bg-white rounded-lg shadow-md">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Inactive Users</p>
+                <p className="text-sm font-medium text-gray-600">{t('admin.inactiveUsers')}</p>
                 <p className="text-3xl font-bold text-orange-600">
                   {users.filter(u => !u.isActive).length}
                 </p>
@@ -163,7 +165,7 @@ const AdminHome: React.FC = () => {
         <div className="mb-6">
           <input
             type="text"
-            placeholder="Search by name, email, or phone..."
+            placeholder={t('admin.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full px-4 py-3 bg-white text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -175,21 +177,21 @@ const AdminHome: React.FC = () => {
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">User</th>
-                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Contact</th>
-                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Profile</th>
-                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Login Method</th>
-                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
-                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Login Count</th>
-                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Last Login</th>
-                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Joined</th>
+                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">{t('admin.tableHeaderUser')}</th>
+                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">{t('admin.tableHeaderContact')}</th>
+                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">{t('admin.tableHeaderProfile')}</th>
+                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">{t('admin.tableHeaderLoginMethod')}</th>
+                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">{t('admin.tableHeaderStatus')}</th>
+                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">{t('admin.tableHeaderLoginCount')}</th>
+                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">{t('admin.tableHeaderLastLogin')}</th>
+                <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">{t('admin.tableHeaderJoined')}</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredUsers.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
-                    No users found
+                    {t('admin.noUsersFound')}
                   </td>
                 </tr>
               ) : (
@@ -234,7 +236,7 @@ const AdminHome: React.FC = () => {
                           ? 'bg-green-100 text-green-800' 
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {user.isActive ? 'Active' : 'Inactive'}
+                        {user.isActive ? t('admin.statusActive') : t('admin.statusInactive')}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">

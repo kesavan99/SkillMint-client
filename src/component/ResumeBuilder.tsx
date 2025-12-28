@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from './Navbar';
 import { getResumeById } from '../client-configuration/resume-API';
+import { useTranslation } from '../locales';
 
 const API_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -63,6 +64,7 @@ const ResumeBuilder: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const resumeIdFromUrl = searchParams.get('resumeId');
+  const { t } = useTranslation();
   
   // Initialize resumeData from localStorage if available
   const getInitialResumeData = (): ResumeData => {
@@ -108,12 +110,12 @@ const ResumeBuilder: React.FC = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<string>(getInitialTemplate());
 
   const templates = [
-    { id: 'resume-template', name: 'Classic Professional', description: 'Traditional format with clean layout', recommended: true },
-    { id: 'resume-template-minimalist', name: 'Minimalist Modern', description: 'Clean design with whitespace focus' },
-    { id: 'resume-template-two-column', name: 'Two-Column Accent', description: 'Sidebar layout with blue accent' },
-    { id: 'resume-template-executive', name: 'Executive Traditional', description: 'Conservative style for senior roles' },
-    { id: 'resume-template-skills-first', name: 'Skills-First Hybrid', description: 'Emphasizes technical competencies' },
-    { id: 'resume-template-creative', name: 'Creative Infographic', description: 'Visual elements with gradient design' },
+    { id: 'resume-template', name: t('resumeBuilder.templateClassic'), description: t('resumeBuilder.templateClassicDesc'), recommended: true },
+    { id: 'resume-template-minimalist', name: t('resumeBuilder.templateMinimalist'), description: t('resumeBuilder.templateMinimalistDesc') },
+    { id: 'resume-template-two-column', name: t('resumeBuilder.templateTwoColumn'), description: t('resumeBuilder.templateTwoColumnDesc') },
+    { id: 'resume-template-executive', name: t('resumeBuilder.templateExecutive'), description: t('resumeBuilder.templateExecutiveDesc') },
+    { id: 'resume-template-skills-first', name: t('resumeBuilder.templateSkillsFirst'), description: t('resumeBuilder.templateSkillsFirstDesc') },
+    { id: 'resume-template-creative', name: t('resumeBuilder.templateCreative'), description: t('resumeBuilder.templateCreativeDesc') },
   ];
 
   // Save to localStorage whenever resumeData or selectedTemplate changes
@@ -150,7 +152,7 @@ const ResumeBuilder: React.FC = () => {
             localStorage.setItem('selectedTemplate', response.data.templateName || 'resume-template');
           }
         } catch (error) {
-          alert('Failed to load resume data. Starting with a new resume.');
+          alert(t('resumeBuilder.failedToLoadResume'));
           setEditingResumeId(null);
         } finally {
           setIsLoadingResume(false);
@@ -166,11 +168,11 @@ const ResumeBuilder: React.FC = () => {
     if (!file) return;
 
     if (file.type !== 'application/pdf') {
-      setUploadStatus({ type: 'error', message: 'Please upload a PDF file' });
+      setUploadStatus({ type: 'error', message: t('resumeBuilder.pdfUploadError') });
       return;
     }
 
-    setUploadStatus({ type: 'loading', message: 'Processing PDF...' });
+    setUploadStatus({ type: 'loading', message: t('resumeBuilder.processingPDF') });
     
     const formData = new FormData();
     formData.append('pdf', file);
@@ -185,7 +187,7 @@ const ResumeBuilder: React.FC = () => {
 
       // Update form with parsed data
       setResumeData(response.data.data);
-      setUploadStatus({ type: 'success', message: 'Resume data extracted successfully! Please review and correct any errors.' });
+      setUploadStatus({ type: 'success', message: t('resumeBuilder.pdfProcessSuccess') });
       
       // Show review modal
       setShowReviewModal(true);
@@ -195,7 +197,7 @@ const ResumeBuilder: React.FC = () => {
     } catch (error) {
       setUploadStatus({ 
         type: 'error', 
-        message: 'Failed to process PDF. Please try again or fill the form manually.' 
+        message: t('resumeBuilder.pdfProcessFailed') 
       });
     }
   };
@@ -363,14 +365,14 @@ const ResumeBuilder: React.FC = () => {
     };
     
     setResumeData(demoData);
-    setUploadStatus({ type: 'success', message: 'Demo data loaded successfully!' });
+    setUploadStatus({ type: 'success', message: t('resumeBuilder.demoDataLoaded') });
     setTimeout(() => setUploadStatus(null), 3000);
   };
 
   // Handle AI Analysis
   const handleAnalyze = async () => {
     if (!jobRole.trim() || !experienceLevel) {
-      setAnalysisError('Please fill in all fields');
+      setAnalysisError(t('resumeBuilder.fillAllFields'));
       return;
     }
 
@@ -398,7 +400,7 @@ const ResumeBuilder: React.FC = () => {
       const result = await response.json();
       setAnalysisResult(result);
     } catch (err) {
-      setAnalysisError(err instanceof Error ? err.message : 'Failed to analyze resume. Please try again.');
+      setAnalysisError(err instanceof Error ? err.message : t('resumeBuilder.analysisFailed'));
     } finally {
       setIsAnalyzing(false);
     }
@@ -425,7 +427,7 @@ const ResumeBuilder: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-8 bg-white rounded-lg shadow-xl">
             <div className="w-16 h-16 mx-auto mb-4 border-b-2 rounded-full animate-spin border-primary-600"></div>
-            <p className="text-lg font-medium text-gray-900">Loading resume data...</p>
+            <p className="text-lg font-medium text-gray-900">{t('resumeBuilder.loadingResumeData')}</p>
           </div>
         </div>
       )}
@@ -437,10 +439,10 @@ const ResumeBuilder: React.FC = () => {
           {/* Header */}
           <div className="p-6 mb-6 bg-white rounded-lg shadow-md">
             <h1 className="mb-2 text-3xl font-bold text-primary-600">
-              {editingResumeId ? `Edit Resume: ${editingResumeName}` : 'Resume Builder'}
+              {editingResumeId ? `${t('resumeBuilder.editResumeTitle')}${editingResumeName}` : t('resumeBuilder.title')}
             </h1>
             <p className="text-gray-600">
-              {editingResumeId ? 'Update your professional resume' : 'Create your professional resume and download as PDF'}
+              {editingResumeId ? t('resumeBuilder.updateResumeSubtitle') : t('resumeBuilder.createResumeSubtitle')}
             </p>
           </div>
 
@@ -448,14 +450,14 @@ const ResumeBuilder: React.FC = () => {
           <div className="p-6 mb-6 bg-white rounded-lg shadow-md">
             <div className="flex flex-col gap-4 mb-4 md:flex-row md:items-center md:justify-between">
               <div>
-                <h2 className="text-xl font-bold text-gray-800">Quick Start</h2>
-                <p className="text-sm text-gray-600">Upload your existing resume PDF to auto-fill the form</p>
+                <h2 className="text-xl font-bold text-gray-800">{t('resumeBuilder.quickStart')}</h2>
+                <p className="text-sm text-gray-600">{t('resumeBuilder.uploadPDFPrompt')}</p>
               </div>
               <label className="flex items-center justify-center w-full px-4 py-2 text-sm text-white transition-colors rounded-lg cursor-pointer md:w-auto md:px-6 md:py-3 md:text-base bg-primary-600 hover:bg-primary-700">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                Upload PDF
+                {t('resumeBuilder.uploadPDF')}
                 <input
                   type="file"
                   accept="application/pdf,.pdf"
@@ -492,7 +494,7 @@ const ResumeBuilder: React.FC = () => {
                   <div className="flex-1">
                     <span className="text-base font-semibold">{uploadStatus.message}</span>
                     {uploadStatus.type === 'success' && (
-                      <p className="mt-1 text-sm text-green-700">Scroll down to review all extracted fields in the form.</p>
+                      <p className="mt-1 text-sm text-green-700">{t('resumeBuilder.reviewExtracted')}</p>
                     )}
                   </div>
                 </div>
@@ -503,8 +505,8 @@ const ResumeBuilder: React.FC = () => {
           {/* Template Selection Section */}
           <div className="p-6 mb-6 bg-white rounded-lg shadow-md">
             <div className="mb-4">
-              <h2 className="text-xl font-bold text-gray-800">Choose Resume Template</h2>
-              <p className="text-sm text-gray-600">Select a professional template that matches your style</p>
+              <h2 className="text-xl font-bold text-gray-800">{t('resumeBuilder.chooseTemplate')}</h2>
+              <p className="text-sm text-gray-600">{t('resumeBuilder.chooseTemplateSubtitle')}</p>
             </div>
             
             <div className="grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-2">
@@ -522,7 +524,7 @@ const ResumeBuilder: React.FC = () => {
                     <div className="flex-1">
                       <h3 className="mb-1 text-base font-bold text-gray-900 md:text-lg">{template.name}</h3>
                       {template.recommended && (
-                        <span className="inline-block px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">✨ Recommended</span>
+                        <span className="inline-block px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">{t('resumeBuilder.recommended')}</span>
                       )}
                     </div>
                     {selectedTemplate === template.id && (
@@ -541,13 +543,13 @@ const ResumeBuilder: React.FC = () => {
                 onClick={handleLoadDemoData}
                 className="w-full px-4 py-2 text-sm font-semibold text-white transition-colors rounded-lg md:w-auto bg-green-600 hover:bg-green-700"
               >
-                📝 Load Demo Data
+                {t('resumeBuilder.loadDemoData')}
               </button>
               <button
                 onClick={handleTemplatePreview}
                 className="w-full px-4 py-2 text-sm font-semibold transition-colors border-2 rounded-lg md:w-auto text-primary-600 border-primary-600 hover:bg-primary-50"
               >
-                👁️ Preview Template
+                {t('resumeBuilder.previewTemplate')}
               </button>
             </div>
           </div>
@@ -557,12 +559,12 @@ const ResumeBuilder: React.FC = () => {
             {/* Personal Information */}
             <section className="mb-8">
               <h2 className="pb-2 mb-4 text-2xl font-bold text-gray-800 border-b-2 border-primary-600">
-                Personal Information
+                {t('resumeBuilder.personalInfo')}
               </h2>
               <div className="grid gap-4 md:grid-cols-2">
                 <input
                   type="text"
-                  placeholder="Full Name *"
+                  placeholder={t('resumeBuilder.fullNameRequired')}
                   value={resumeData.personalInfo.name}
                   onChange={(e) => handlePersonalInfoChange('name', e.target.value)}
                   className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -570,7 +572,7 @@ const ResumeBuilder: React.FC = () => {
                 />
                 <input
                   type="email"
-                  placeholder="Email *"
+                  placeholder={t('resumeBuilder.emailRequired')}
                   value={resumeData.personalInfo.email}
                   onChange={(e) => handlePersonalInfoChange('email', e.target.value)}
                   className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -578,7 +580,7 @@ const ResumeBuilder: React.FC = () => {
                 />
                 <input
                   type="tel"
-                  placeholder="Phone *"
+                  placeholder={t('resumeBuilder.phoneRequired')}
                   value={resumeData.personalInfo.phone}
                   onChange={(e) => handlePersonalInfoChange('phone', e.target.value)}
                   className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -586,7 +588,7 @@ const ResumeBuilder: React.FC = () => {
                 />
                 <input
                   type="text"
-                  placeholder="Location *"
+                  placeholder={t('resumeBuilder.locationRequired')}
                   value={resumeData.personalInfo.location}
                   onChange={(e) => handlePersonalInfoChange('location', e.target.value)}
                   className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -594,14 +596,14 @@ const ResumeBuilder: React.FC = () => {
                 />
                 <input
                   type="url"
-                  placeholder="LinkedIn URL"
+                  placeholder={t('resumeBuilder.linkedinUrl')}
                   value={resumeData.personalInfo.linkedin}
                   onChange={(e) => handlePersonalInfoChange('linkedin', e.target.value)}
                   className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
                 <input
                   type="url"
-                  placeholder="Portfolio URL"
+                  placeholder={t('resumeBuilder.portfolioUrl')}
                   value={resumeData.personalInfo.portfolio}
                   onChange={(e) => handlePersonalInfoChange('portfolio', e.target.value)}
                   className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -612,10 +614,10 @@ const ResumeBuilder: React.FC = () => {
             {/* Summary */}
             <section className="mb-8">
               <h2 className="pb-2 mb-4 text-2xl font-bold text-gray-800 border-b-2 border-primary-600">
-                Professional Summary
+                {t('resumeBuilder.professionalSummary')}
               </h2>
               <textarea
-                placeholder="Write a brief summary about yourself..."
+                placeholder={t('resumeBuilder.summaryPlaceholder')}
                 value={resumeData.summary}
                 onChange={(e) => setResumeData(prev => ({ ...prev, summary: e.target.value }))}
                 className="w-full px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
@@ -626,35 +628,35 @@ const ResumeBuilder: React.FC = () => {
             {/* Education */}
             <section className="mb-8">
               <h2 className="pb-2 mb-4 text-2xl font-bold text-gray-800 border-b-2 border-primary-600">
-                Education
+                {t('resumeBuilder.education')}
               </h2>
               {resumeData.education.map((edu, index) => (
                 <div key={index} className="p-4 mb-4 border border-gray-200 rounded-lg">
                   <div className="grid gap-4 mb-2 md:grid-cols-2">
                     <input
                       type="text"
-                      placeholder="Degree"
+                      placeholder={t('resumeBuilder.degree')}
                       value={edu.degree}
                       onChange={(e) => handleArrayFieldChange('education', index, 'degree', e.target.value)}
                       className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                     />
                     <input
                       type="text"
-                      placeholder="Institution"
+                      placeholder={t('resumeBuilder.institution')}
                       value={edu.institution}
                       onChange={(e) => handleArrayFieldChange('education', index, 'institution', e.target.value)}
                       className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                     />
                     <input
                       type="text"
-                      placeholder="Year (e.g., 2020-2024)"
+                      placeholder={t('resumeBuilder.yearPlaceholder')}
                       value={edu.year}
                       onChange={(e) => handleArrayFieldChange('education', index, 'year', e.target.value)}
                       className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                     />
                     <input
                       type="text"
-                      placeholder="GPA (optional)"
+                      placeholder={t('resumeBuilder.gpaOptional')}
                       value={edu.gpa}
                       onChange={(e) => handleArrayFieldChange('education', index, 'gpa', e.target.value)}
                       className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
@@ -665,7 +667,7 @@ const ResumeBuilder: React.FC = () => {
                       onClick={() => removeArrayItem('education', index)}
                       className="text-sm font-semibold text-red-600 hover:text-red-800"
                     >
-                      Remove
+                      {t('resumeBuilder.remove')}
                     </button>
                   )}
                 </div>
@@ -674,42 +676,42 @@ const ResumeBuilder: React.FC = () => {
                 onClick={() => addArrayItem('education')}
                 className="px-4 py-2 font-semibold text-white rounded-lg bg-primary-600 hover:bg-primary-700"
               >
-                + Add Education
+                {t('resumeBuilder.addEducation')}
               </button>
             </section>
 
             {/* Experience */}
             <section className="mb-8">
               <h2 className="pb-2 mb-4 text-2xl font-bold text-gray-800 border-b-2 border-primary-600">
-                Professional Experience
+                {t('resumeBuilder.professionalExperience')}
               </h2>
               {resumeData.experience.map((exp, index) => (
                 <div key={index} className="p-4 mb-4 border border-gray-200 rounded-lg">
                   <div className="grid gap-4 mb-2 md:grid-cols-2">
                     <input
                       type="text"
-                      placeholder="Job Title"
+                      placeholder={t('resumeBuilder.jobTitle')}
                       value={exp.title}
                       onChange={(e) => handleArrayFieldChange('experience', index, 'title', e.target.value)}
                       className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                     />
                     <input
                       type="text"
-                      placeholder="Company"
+                      placeholder={t('resumeBuilder.company')}
                       value={exp.company}
                       onChange={(e) => handleArrayFieldChange('experience', index, 'company', e.target.value)}
                       className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                     />
                     <input
                       type="text"
-                      placeholder="Duration (e.g., Jan 2022 - Present)"
+                      placeholder={t('resumeBuilder.durationPlaceholder')}
                       value={exp.duration}
                       onChange={(e) => handleArrayFieldChange('experience', index, 'duration', e.target.value)}
                       className="px-4 py-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 md:col-span-2"
                     />
                   </div>
                   <textarea
-                    placeholder="Job Description"
+                    placeholder={t('resumeBuilder.jobDescription')}
                     value={exp.description}
                     onChange={(e) => handleArrayFieldChange('experience', index, 'description', e.target.value)}
                     className="w-full px-4 py-2 mb-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
@@ -720,7 +722,7 @@ const ResumeBuilder: React.FC = () => {
                       onClick={() => removeArrayItem('experience', index)}
                       className="text-sm font-semibold text-red-600 hover:text-red-800"
                     >
-                      Remove
+                      {t('resumeBuilder.remove')}
                     </button>
                   )}
                 </div>
@@ -729,19 +731,19 @@ const ResumeBuilder: React.FC = () => {
                 onClick={() => addArrayItem('experience')}
                 className="px-4 py-2 font-semibold text-white rounded-lg bg-primary-600 hover:bg-primary-700"
               >
-                + Add Experience
+                {t('resumeBuilder.addExperience')}
               </button>
             </section>
 
             {/* Skills */}
             <section className="mb-8">
               <h2 className="pb-2 mb-4 text-2xl font-bold text-gray-800 border-b-2 border-primary-600">
-                Skills
+                {t('resumeBuilder.skills')}
               </h2>
               <div className="flex gap-2 mb-4">
                 <input
                   type="text"
-                  placeholder="Add a skill"
+                  placeholder={t('resumeBuilder.addSkillPlaceholder')}
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addSkill()}
@@ -751,7 +753,7 @@ const ResumeBuilder: React.FC = () => {
                   onClick={addSkill}
                   className="px-6 py-2 font-semibold text-white rounded-lg bg-primary-600 hover:bg-primary-700"
                 >
-                  Add
+                  {t('resumeBuilder.add')}
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -775,19 +777,19 @@ const ResumeBuilder: React.FC = () => {
             {/* Projects */}
             <section className="mb-8">
               <h2 className="pb-2 mb-4 text-2xl font-bold text-gray-800 border-b-2 border-primary-600">
-                Projects
+                {t('resumeBuilder.projects')}
               </h2>
               {resumeData.projects.map((proj, index) => (
                 <div key={index} className="p-4 mb-4 border border-gray-200 rounded-lg">
                   <input
                     type="text"
-                    placeholder="Project Name"
+                    placeholder={t('resumeBuilder.projectName')}
                     value={proj.name}
                     onChange={(e) => handleArrayFieldChange('projects', index, 'name', e.target.value)}
                     className="w-full px-4 py-2 mb-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
                   />
                   <textarea
-                    placeholder="Project Description"
+                    placeholder={t('resumeBuilder.projectDescription')}
                     value={proj.description}
                     onChange={(e) => handleArrayFieldChange('projects', index, 'description', e.target.value)}
                     className="w-full px-4 py-2 mb-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
@@ -795,7 +797,7 @@ const ResumeBuilder: React.FC = () => {
                   />
                   <input
                     type="text"
-                    placeholder="Technologies Used"
+                    placeholder={t('resumeBuilder.technologiesUsed')}
                     value={proj.technologies}
                     onChange={(e) => handleArrayFieldChange('projects', index, 'technologies', e.target.value)}
                     className="w-full px-4 py-2 mb-2 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500"
@@ -805,7 +807,7 @@ const ResumeBuilder: React.FC = () => {
                       onClick={() => removeArrayItem('projects', index)}
                       className="text-sm font-semibold text-red-600 hover:text-red-800"
                     >
-                      Remove
+                      {t('resumeBuilder.remove')}
                     </button>
                   )}
                 </div>
@@ -814,7 +816,7 @@ const ResumeBuilder: React.FC = () => {
                 onClick={() => addArrayItem('projects')}
                 className="px-4 py-2 font-semibold text-white rounded-lg bg-primary-600 hover:bg-primary-700"
               >
-                + Add Project
+                {t('resumeBuilder.addProject')}
               </button>
             </section>
           </div>
@@ -827,14 +829,14 @@ const ResumeBuilder: React.FC = () => {
                 disabled={!resumeData.personalInfo.name}
                 className="w-full px-4 py-2 text-base font-semibold transition-colors transform border-2 rounded-lg shadow-lg md:w-auto md:px-8 md:py-3 md:text-lg text-primary-600 border-primary-600 hover:bg-primary-50 hover:shadow-xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                🤖 {showAIAnalysis ? 'Hide' : 'Show'} AI Analysis
+                {showAIAnalysis ? t('resumeBuilder.hideAIAnalysis') : t('resumeBuilder.showAIAnalysis')}
               </button>
               <button
                 onClick={handlePreview}
                 disabled={!resumeData.personalInfo.name}
                 className="w-full px-4 py-2 text-base font-semibold text-white transition-colors rounded-lg md:w-auto md:px-8 md:py-3 md:text-lg bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400"
               >
-                👁️ Preview Resume
+                {t('resumeBuilder.previewResume')}
               </button>
             </div>
           </div>
@@ -847,7 +849,7 @@ const ResumeBuilder: React.FC = () => {
         <div className="fixed top-0 right-0 z-40 w-[30%] h-screen overflow-y-auto bg-white border-l border-gray-200 shadow-2xl">
           {/* Sidebar Header */}
           <div className="sticky top-0 z-10 flex items-center justify-between p-4 bg-white border-b border-gray-200">
-            <h2 className="text-xl font-bold text-gray-800">AI Analysis</h2>
+            <h2 className="text-xl font-bold text-gray-800">{t('resumeBuilder.aiAnalysisTitle')}</h2>
             <button
               onClick={() => setShowAIAnalysis(false)}
               className="text-gray-400 hover:text-gray-600"
@@ -863,13 +865,13 @@ const ResumeBuilder: React.FC = () => {
             <div className="space-y-3 ai-analysis-form">
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">
-                  Job role and description
+                  {t('resumeBuilder.jobRoleLabel')}
                 </label>
                 <textarea
                   // type="text"
                   value={jobRole}
                   onChange={(e) => setJobRole(e.target.value)}
-                  placeholder="place job description here"
+                  placeholder={t('resumeBuilder.jobRolePlaceholder')}
                   className="w-full px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   disabled={isAnalyzing}
                 />
@@ -877,7 +879,7 @@ const ResumeBuilder: React.FC = () => {
 
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">
-                  Experience Level *
+                  {t('resumeBuilder.experienceLevelLabel')}
                 </label>
                 <select
                   value={experienceLevel}
@@ -885,12 +887,12 @@ const ResumeBuilder: React.FC = () => {
                   className="w-full px-3 py-2 text-sm text-gray-900 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   disabled={isAnalyzing}
                 >
-                  <option value="">Select level</option>
-                  <option value="entry">Entry Level (0-2 years)</option>
-                  <option value="junior">Junior (2-4 years)</option>
-                  <option value="mid">Mid Level (4-7 years)</option>
-                  <option value="senior">Senior (7-10 years)</option>
-                  <option value="lead">Lead/Principal (10+ years)</option>
+                  <option value="">{t('resumeBuilder.selectLevel')}</option>
+                  <option value="entry">{t('resumeBuilder.entryLevel')}</option>
+                  <option value="junior">{t('resumeBuilder.juniorLevel')}</option>
+                  <option value="mid">{t('resumeBuilder.midLevel')}</option>
+                  <option value="senior">{t('resumeBuilder.seniorLevel')}</option>
+                  <option value="lead">{t('resumeBuilder.leadLevel')}</option>
                 </select>
               </div>
 
@@ -916,10 +918,10 @@ const ResumeBuilder: React.FC = () => {
                         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                       </svg>
-                      Analyzing...
+                      {t('resumeBuilder.analyzing')}
                     </span>
                   ) : (
-                    'Analyze Resume'
+                    t('resumeBuilder.analyzeResume')
                   )}
                 </button>
               ) : (
@@ -927,7 +929,7 @@ const ResumeBuilder: React.FC = () => {
                   onClick={handleResetAnalysis}
                   className="w-full px-4 py-2 text-sm font-semibold text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700"
                 >
-                  New Analysis
+                  {t('resumeBuilder.newAnalysis')}
                 </button>
               )}
             </div>
@@ -940,14 +942,14 @@ const ResumeBuilder: React.FC = () => {
                 <svg className="w-16 h-16 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
-                <p className="text-sm text-center">Enter job details to start analysis</p>
+                <p className="text-sm text-center">{t('resumeBuilder.enterJobDetails')}</p>
               </div>
             ) : (
               <div className="space-y-4">
                 {/* Score Card */}
                 <div className="p-4 border-2 rounded-lg border-primary-200 bg-primary-50">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-semibold text-gray-800">Overall Score</h3>
+                    <h3 className="text-sm font-semibold text-gray-800">{t('resumeBuilder.overallScore')}</h3>
                     <div className="text-2xl font-bold text-primary-600">
                       {analysisResult.score}/100
                     </div>
@@ -959,7 +961,7 @@ const ResumeBuilder: React.FC = () => {
                     ></div>
                   </div>
                   <p className="mt-2 text-xs text-gray-600">
-                    Match: <span className="font-semibold">{analysisResult.matchPercentage}%</span>
+                    {t('resumeBuilder.match')} <span className="font-semibold">{analysisResult.matchPercentage}%</span>
                   </p>
                 </div>
 
@@ -970,7 +972,7 @@ const ResumeBuilder: React.FC = () => {
                       <svg className="w-4 h-4 mr-1 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                       </svg>
-                      Missing Skills
+                      {t('resumeBuilder.missingSkills')}
                     </h3>
                     <div className="flex flex-wrap gap-2">
                       {analysisResult.missingSkills.map((skill, index) => (
@@ -991,7 +993,7 @@ const ResumeBuilder: React.FC = () => {
                     <svg className="w-4 h-4 mr-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
-                    Strengths
+                    {t('resumeBuilder.strengths')}
                   </h3>
                   <ul className="space-y-1">
                     {analysisResult.strengths.map((strength, index) => (
@@ -1009,7 +1011,7 @@ const ResumeBuilder: React.FC = () => {
                     <svg className="w-4 h-4 mr-1 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
-                    Areas for Improvement
+                    {t('resumeBuilder.areasForImprovement')}
                   </h3>
                   <ul className="space-y-1">
                     {analysisResult.weaknesses.map((weakness, index) => (
@@ -1027,7 +1029,7 @@ const ResumeBuilder: React.FC = () => {
                     <svg className="w-4 h-4 mr-1 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                     </svg>
-                    Suggestions
+                    {t('resumeBuilder.suggestions')}
                   </h3>
                   <ul className="space-y-2">
                     {analysisResult.suggestions.map((suggestion, index) => (
@@ -1059,8 +1061,8 @@ const ResumeBuilder: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Resume Data Extracted!</h2>
-                    <p className="mt-1 text-sm text-gray-600">Please review and correct any errors before proceeding</p>
+                    <h2 className="text-2xl font-bold text-gray-900">{t('resumeBuilder.resumeDataExtracted')}</h2>
+                    <p className="mt-1 text-sm text-gray-600">{t('resumeBuilder.reviewModalSubtitle')}</p>
                   </div>
                 </div>
                 <button
@@ -1081,9 +1083,9 @@ const ResumeBuilder: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                   <div>
-                    <h3 className="mb-1 font-semibold text-yellow-900">Important: Review Required</h3>
+                    <h3 className="mb-1 font-semibold text-yellow-900">{t('resumeBuilder.importantReviewRequired')}</h3>
                     <p className="text-sm text-yellow-800">
-                      The AI may have made spelling mistakes or formatting errors. Please scroll through the form below and verify all information is correct.
+                      {t('resumeBuilder.reviewWarningText')}
                     </p>
                   </div>
                 </div>
@@ -1091,46 +1093,46 @@ const ResumeBuilder: React.FC = () => {
 
               <div className="space-y-4">
                 <div className="p-4 rounded-lg bg-gray-50">
-                  <h3 className="mb-3 text-lg font-semibold text-gray-900">Extracted Information:</h3>
+                  <h3 className="mb-3 text-lg font-semibold text-gray-900">{t('resumeBuilder.extractedInformation')}</h3>
                   
                   <div className="space-y-3 text-sm">
                     <div className="grid grid-cols-2 gap-2">
                       <div>
-                        <span className="font-medium text-gray-700">Name:</span>
-                        <p className="text-gray-900">{resumeData.personalInfo.name || 'Not found'}</p>
+                        <span className="font-medium text-gray-700">{t('resumeBuilder.nameLabel')}</span>
+                        <p className="text-gray-900">{resumeData.personalInfo.name || t('resumeBuilder.notFound')}</p>
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700">Email:</span>
-                        <p className="text-gray-900">{resumeData.personalInfo.email || 'Not found'}</p>
+                        <span className="font-medium text-gray-700">{t('resumeBuilder.emailLabel')}</span>
+                        <p className="text-gray-900">{resumeData.personalInfo.email || t('resumeBuilder.notFound')}</p>
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700">Phone:</span>
-                        <p className="text-gray-900">{resumeData.personalInfo.phone || 'Not found'}</p>
+                        <span className="font-medium text-gray-700">{t('resumeBuilder.phoneLabel')}</span>
+                        <p className="text-gray-900">{resumeData.personalInfo.phone || t('resumeBuilder.notFound')}</p>
                       </div>
                       <div>
-                        <span className="font-medium text-gray-700">Location:</span>
-                        <p className="text-gray-900">{resumeData.personalInfo.location || 'Not found'}</p>
+                        <span className="font-medium text-gray-700">{t('resumeBuilder.locationLabel')}</span>
+                        <p className="text-gray-900">{resumeData.personalInfo.location || t('resumeBuilder.notFound')}</p>
                       </div>
                     </div>
 
                     <div>
-                      <span className="font-medium text-gray-700">Education Entries:</span>
-                      <p className="text-gray-900">{resumeData.education.length} found</p>
+                      <span className="font-medium text-gray-700">{t('resumeBuilder.educationEntries')}</span>
+                      <p className="text-gray-900">{resumeData.education.length}{t('resumeBuilder.foundCount')}</p>
                     </div>
 
                     <div>
-                      <span className="font-medium text-gray-700">Experience Entries:</span>
-                      <p className="text-gray-900">{resumeData.experience.length} found</p>
+                      <span className="font-medium text-gray-700">{t('resumeBuilder.experienceEntries')}</span>
+                      <p className="text-gray-900">{resumeData.experience.length}{t('resumeBuilder.foundCount')}</p>
                     </div>
 
                     <div>
-                      <span className="font-medium text-gray-700">Skills:</span>
-                      <p className="text-gray-900">{resumeData.skills.length} found</p>
+                      <span className="font-medium text-gray-700">{t('resumeBuilder.skillsFound')}</span>
+                      <p className="text-gray-900">{resumeData.skills.length}{t('resumeBuilder.foundCount')}</p>
                     </div>
 
                     <div>
-                      <span className="font-medium text-gray-700">Projects:</span>
-                      <p className="text-gray-900">{resumeData.projects.length} found</p>
+                      <span className="font-medium text-gray-700">{t('resumeBuilder.projectsFound')}</span>
+                      <p className="text-gray-900">{resumeData.projects.length}{t('resumeBuilder.foundCount')}</p>
                     </div>
                   </div>
                 </div>
@@ -1140,7 +1142,7 @@ const ResumeBuilder: React.FC = () => {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   <p className="text-sm text-blue-900">
-                    Click "Review & Edit" to check each field in the form below, or "Continue" if everything looks correct.
+                    {t('resumeBuilder.reviewNote')}
                   </p>
                 </div>
               </div>
@@ -1154,13 +1156,13 @@ const ResumeBuilder: React.FC = () => {
                   }}
                   className="flex-1 px-6 py-3 font-semibold text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700"
                 >
-                  Review & Edit Form
+                  {t('resumeBuilder.reviewEditForm')}
                 </button>
                 <button
                   onClick={() => setShowReviewModal(false)}
                   className="flex-1 px-6 py-3 font-semibold text-gray-700 transition-colors bg-gray-200 rounded-lg hover:bg-gray-300"
                 >
-                  Continue
+                  {t('resumeBuilder.continue')}
                 </button>
               </div>
             </div>

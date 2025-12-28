@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Select from 'react-select';
+import { useTranslation } from '../locales';
 
 interface ResumeData {
   personalInfo: {
@@ -53,6 +54,7 @@ interface AnalysisResult {
 }
 
 const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, resumeData }) => {
+  const { t } = useTranslation();
   const [jobRole, setJobRole] = useState('');
   const [experienceLevel, setExperienceLevel] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -60,16 +62,16 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
   const [error, setError] = useState<string | null>(null);
 
   const experienceLevelOptions = [
-    { value: 'entry', label: 'Entry Level (0-2 years)' },
-    { value: 'junior', label: 'Junior (2-4 years)' },
-    { value: 'mid', label: 'Mid Level (4-7 years)' },
-    { value: 'senior', label: 'Senior (7-10 years)' },
-    { value: 'lead', label: 'Lead/Principal (10+ years)' },
+    { value: 'entry', label: t('aiAnalysis.entryLevel') },
+    { value: 'junior', label: t('aiAnalysis.juniorLevel') },
+    { value: 'mid', label: t('aiAnalysis.midLevel') },
+    { value: 'senior', label: t('aiAnalysis.seniorLevel') },
+    { value: 'lead', label: t('aiAnalysis.leadLevel') },
   ];
 
   const handleAnalyze = async () => {
     if (!jobRole.trim() || !experienceLevel) {
-      setError('Please fill in all fields');
+      setError(t('aiAnalysis.fillAllFields'));
       return;
     }
 
@@ -99,7 +101,7 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
       const result = await response.json();
       setAnalysisResult(result);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to analyze resume. Please try again.');
+      setError(err instanceof Error ? err.message : t('aiAnalysis.analysisFailed'));
     } finally {
       setIsAnalyzing(false);
     }
@@ -120,7 +122,7 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
         {/* Left Panel - Input Form */}
         <div className={`flex-shrink-0 w-full p-4 overflow-y-auto border-b border-gray-200 md:w-1/3 sm:p-6 md:border-b-0 md:border-r ${analysisResult ? 'hidden md:flex md:flex-col' : 'flex flex-col'}`}>
           <div className="flex items-center justify-between mb-4 sm:mb-6">
-            <h2 className="text-lg font-bold text-gray-800 sm:text-xl md:text-2xl">AI Analysis</h2>
+            <h2 className="text-lg font-bold text-gray-800 sm:text-xl md:text-2xl">{t('aiAnalysis.title')}</h2>
             <button
               onClick={onClose}
               className="p-1 text-gray-400 transition-colors rounded-lg hover:text-gray-600 hover:bg-gray-100"
@@ -134,13 +136,13 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
           <div className="space-y-3 sm:space-y-4 ai-analysis-form">
             <div>
               <label className="block mb-1.5 sm:mb-2 text-sm font-medium text-gray-700">
-                Job role and description
+                {t('aiAnalysis.jobRoleLabel')}
               </label>
               <textarea
                 rows={4}
                 value={jobRole}
                 onChange={(e) => setJobRole(e.target.value)}
-                placeholder="Paste job description here..."
+                placeholder={t('aiAnalysis.jobRolePlaceholder')}
                 className="w-full px-3 py-2.5 sm:py-2 text-base sm:text-sm text-gray-900 border border-gray-300 rounded-lg sm:px-4 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
                 disabled={isAnalyzing || !!analysisResult}
               />
@@ -148,14 +150,14 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
 
             <div>
               <label className="block mb-1.5 sm:mb-2 text-sm font-medium text-gray-700">
-                Experience Level *
+                {t('aiAnalysis.experienceLevelRequired')}
               </label>
               <Select
                 value={experienceLevelOptions.find(opt => opt.value === experienceLevel) || null}
                 onChange={(option) => setExperienceLevel(option?.value || '')}
                 options={experienceLevelOptions}
                 isDisabled={isAnalyzing || !!analysisResult}
-                placeholder="Select level"
+                placeholder={t('aiAnalysis.selectLevel')}
                 className="react-select-container"
                 classNamePrefix="react-select"
                 styles={{
@@ -232,10 +234,10 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
-                    Analyzing...
+                    {t('aiAnalysis.analyzing')}
                   </span>
                 ) : (
-                  'Analyze Resume'
+                  t('aiAnalysis.analyzeButton')
                 )}
               </button>
             ) : (
@@ -243,7 +245,7 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
                 onClick={handleReset}
                 className="w-full px-4 py-3 text-sm font-semibold text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700 active:bg-primary-800"
               >
-                New Analysis
+                {t('aiAnalysis.newAnalysis')}
               </button>
             )}
           </div>
@@ -256,13 +258,13 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
               <svg className="w-20 h-20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
-              <p className="px-4 text-sm text-center sm:text-base">Enter job details to start analysis</p>
+              <p className="px-4 text-sm text-center sm:text-base">{t('aiAnalysis.enterJobDetails')}</p>
             </div>
           ) : (
             <div className="pb-4 space-y-4 sm:space-y-6">
               {/* Mobile Close Button - Only visible on mobile when results are shown */}
               <div className="flex items-center justify-between mb-2 md:hidden">
-                <h2 className="text-lg font-bold text-gray-800">Analysis Results</h2>
+                <h2 className="text-lg font-bold text-gray-800">{t('aiAnalysis.analysisResults')}</h2>
                 <button
                   onClick={onClose}
                   className="p-1 text-gray-400 transition-colors rounded-lg hover:text-gray-600 hover:bg-gray-100"
@@ -276,7 +278,7 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
               {/* Score Card */}
               <div className="p-4 border-2 rounded-lg sm:p-5 border-primary-200 bg-primary-50">
                 <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-base font-semibold text-gray-800 sm:text-lg">Overall Score</h3>
+                  <h3 className="text-base font-semibold text-gray-800 sm:text-lg">{t('aiAnalysis.overallScore')}</h3>
                   <div className="text-3xl font-bold sm:text-4xl text-primary-600">
                     {analysisResult.score}/100
                   </div>
@@ -288,7 +290,7 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
                   ></div>
                 </div>
                 <p className="mt-2 text-sm text-gray-600">
-                  Match Percentage: <span className="font-semibold">{analysisResult.matchPercentage}%</span>
+                  {t('aiAnalysis.matchPercentage')}: <span className="font-semibold">{analysisResult.matchPercentage}%</span>
                 </p>
               </div>
 
@@ -299,7 +301,7 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
                     <svg className="w-5 h-5 mr-2 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
-                    Missing Skills
+                    {t('aiAnalysis.missingSkills')}
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {analysisResult.missingSkills.map((skill, index) => (
@@ -320,7 +322,7 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
                   <svg className="w-5 h-5 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
-                  Strengths
+                  {t('aiAnalysis.strengths')}
                 </h3>
                 <ul className="space-y-2">
                   {analysisResult.strengths.map((strength, index) => (
@@ -338,7 +340,7 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
                   <svg className="w-5 h-5 mr-2 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
-                  Areas for Improvement
+                  {t('aiAnalysis.weaknesses')}
                 </h3>
                 <ul className="space-y-2">
                   {analysisResult.weaknesses.map((weakness, index) => (
@@ -356,7 +358,7 @@ const AIAnalysisDialog: React.FC<AIAnalysisDialogProps> = ({ isOpen, onClose, re
                   <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                   </svg>
-                  Suggestions
+                  {t('aiAnalysis.suggestions')}
                 </h3>
                 <ul className="space-y-3">
                   {analysisResult.suggestions.map((suggestion, index) => (

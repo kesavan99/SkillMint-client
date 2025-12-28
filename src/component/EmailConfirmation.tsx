@@ -1,11 +1,13 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useTranslation } from '../locales';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const EmailConfirmation = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
   
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
@@ -29,6 +31,7 @@ const EmailConfirmation = () => {
         if (tokenFromUrl) setToken(tokenFromUrl);
         if (typeFromUrl) setType(typeFromUrl);
       } catch (err) {
+        console.error('Invalid continueUrl:', err);
       }
     }
     
@@ -48,28 +51,28 @@ const EmailConfirmation = () => {
     setError('');
 
     if (!password) {
-      setError('Please enter your password.');
+      setError(t('auth.pleaseEnterPassword'));
       return;
     }
 
     // For password reset, require password confirmation
     if (type === 'reset') {
       if (!confirmPassword) {
-        setError('Please confirm your password.');
+        setError(t('auth.pleaseConfirmPassword'));
         return;
       }
       if (password !== confirmPassword) {
-        setError('Passwords do not match.');
+        setError(t('auth.passwordsDoNotMatch'));
         return;
       }
       if (password.length < 6) {
-        setError('Password must be at least 6 characters long.');
+        setError(t('auth.passwordTooShortSignup'));
         return;
       }
     }
 
     if (!email || !token) {
-      setError('Invalid confirmation link.');
+      setError(t('auth.invalidConfirmationLink'));
       return;
     }
 
@@ -92,10 +95,10 @@ const EmailConfirmation = () => {
         const message = type === 'reset' ? 'reset=true' : 'verified=true';
         navigate(`/login?${message}`);
       } else {
-        setError(data.message || (type === 'reset' ? 'Password reset failed.' : 'Confirmation failed. Please check your password.'));
+        setError(data.message || (type === 'reset' ? t('auth.passwordResetFailed') : t('auth.confirmationFailed')));
       }
     } catch (err) {
-      setError('An unexpected error occurred.');
+      setError(t('auth.unexpectedError'));
     } finally {
       setLoading(false);
     }
@@ -108,13 +111,13 @@ const EmailConfirmation = () => {
           <div className="flex justify-center mb-4">
             <img src="/logo.png" alt="SkillMint Logo" className="h-12" style={{ width: 'auto' }} />
           </div>
-          <h2 className="text-3xl font-bold mb-4" style={{ color: '#19B86B' }}>
-            {type === 'reset' ? 'Reset Your Password' : 'Confirm Your Email'}
+          <h2 className="mb-4 text-3xl font-bold" style={{ color: '#19B86B' }}>
+            {type === 'reset' ? t('auth.resetYourPassword') : t('auth.confirmYourEmail')}
           </h2>
           <p className="text-sm text-gray-600">
             {type === 'reset' 
-              ? 'Enter your new password below' 
-              : 'Enter your password to activate your account'}
+              ? t('auth.enterNewPassword') 
+              : t('auth.enterPasswordToActivate')}
           </p>
         </div>
 
@@ -130,14 +133,14 @@ const EmailConfirmation = () => {
               htmlFor="email"
               className="text-sm font-medium text-gray-700"
             >
-              Email
+              {t('auth.email')}
             </label>
             <input
               type="email"
               id="email"
               value={email || ''}
               disabled
-              className="input bg-gray-100"
+              className="bg-gray-100 input"
             />
           </div>
 
@@ -146,14 +149,14 @@ const EmailConfirmation = () => {
               htmlFor="password"
               className="text-sm font-medium text-gray-700"
             >
-              {type === 'reset' ? 'New Password' : 'Password'}
+              {type === 'reset' ? t('auth.newPassword') : t('auth.password')}
             </label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder={type === 'reset' ? 'Enter new password' : 'Enter your password'}
+              placeholder={type === 'reset' ? t('auth.newPasswordPlaceholder') : t('auth.enterYourPassword')}
               required
               disabled={loading}
               minLength={type === 'reset' ? 6 : undefined}
@@ -161,8 +164,8 @@ const EmailConfirmation = () => {
             />
             <p className="text-xs text-gray-500">
               {type === 'reset' 
-                ? 'Must be at least 6 characters long' 
-                : 'Enter the password you used during signup'}
+                ? t('auth.passwordMinLength') 
+                : t('auth.passwordUsedDuringSignup')}
             </p>
           </div>
 
@@ -172,14 +175,14 @@ const EmailConfirmation = () => {
                 htmlFor="confirmPassword"
                 className="text-sm font-medium text-gray-700"
               >
-                Confirm Password
+                {t('auth.confirmNewPassword')}
               </label>
               <input
                 type="password"
                 id="confirmPassword"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm new password"
+                placeholder={t('auth.confirmNewPasswordPlaceholder')}
                 required
                 disabled={loading}
                 minLength={6}
@@ -194,8 +197,8 @@ const EmailConfirmation = () => {
             disabled={loading}
           >
             {loading 
-              ? (type === 'reset' ? 'Resetting...' : 'Confirming...') 
-              : (type === 'reset' ? 'Reset Password' : 'Confirm & Activate Account')}
+              ? (type === 'reset' ? t('auth.resetting') : t('auth.confirming')) 
+              : (type === 'reset' ? t('auth.resetPasswordButton') : t('auth.confirmActivateAccount'))}
           </button>
         </form>
 
@@ -206,7 +209,7 @@ const EmailConfirmation = () => {
             style={{ color: '#19B86B' }}
             onClick={() => navigate('/login')}
           >
-            Back to Login
+            {t('auth.backToLogin')}
           </button>
         </div>
       </div>

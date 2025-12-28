@@ -1,11 +1,13 @@
 import React, { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { sendPasswordResetEmail } from '../service/firebaseAuthService';
+import { useTranslation } from '../locales';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const ForgotPassword: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -17,7 +19,7 @@ const ForgotPassword: React.FC = () => {
     setSuccess('');
 
     if (!email) {
-      setError('Please enter your email address');
+      setError(t('auth.pleaseEnterEmailAddress'));
       return;
     }
 
@@ -41,7 +43,7 @@ const ForgotPassword: React.FC = () => {
           const resetUrl = `${window.location.origin}/login/token?email=${encodeURIComponent(email)}&token=${resetToken}&type=reset`;
           await sendPasswordResetEmail(email, resetUrl);
           
-          setSuccess('Password reset email sent! Please check your inbox.');
+          setSuccess(t('auth.resetLinkSent'));
           setEmail('');
           
           // Redirect to email verification info page
@@ -49,17 +51,17 @@ const ForgotPassword: React.FC = () => {
             navigate(`/email-verification?email=${encodeURIComponent(email)}&type=reset`);
           }, 2000);
         } catch (firebaseErr: any) {
-          setError('Failed to send reset email. Please try again.');
+          setError(t('auth.failedToSendResetEmail'));
         }
       } else {
         // For security, show success even if email doesn't exist
-        setSuccess('If an account with that email exists, a password reset link has been sent.');
+        setSuccess(t('auth.resetEmailSent'));
         setTimeout(() => {
           navigate('/login');
         }, 3000);
       }
     } catch (err) {
-      setError('An error occurred. Please try again.');
+      setError(t('auth.errorOccurred'));
     } finally {
       setLoading(false);
     }
@@ -73,10 +75,10 @@ const ForgotPassword: React.FC = () => {
             <img src="/logo.png" alt="SkillMint Logo" className="h-12" style={{ width: 'auto' }} />
           </div>
           <h2 className="mb-2 text-3xl font-bold" style={{ color: '#19B86B' }}>
-            Forgot Password
+            {t('auth.forgotPasswordTitle')}
           </h2>
           <p className="text-gray-600">
-            Enter your email address and we'll send you a link to reset your password.
+            {t('auth.enterEmailForReset')}
           </p>
         </div>
         
@@ -95,14 +97,14 @@ const ForgotPassword: React.FC = () => {
           
           <div className="flex flex-col gap-2">
             <label htmlFor="email" className="font-medium text-gray-700">
-              Email Address
+              {t('auth.emailAddressLabel')}
             </label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
+              placeholder={t('auth.enterYourEmail')}
               className="input"
               required
               disabled={loading}
@@ -114,7 +116,7 @@ const ForgotPassword: React.FC = () => {
             disabled={loading}
             className="w-full py-3 transition-all rounded-lg btn-primary disabled:opacity-50"
           >
-            {loading ? 'Sending...' : 'Send Reset Link'}
+            {loading ? t('auth.sending') : t('auth.sendResetLink')}
           </button>
 
           <div className="text-center">
@@ -123,7 +125,7 @@ const ForgotPassword: React.FC = () => {
               onClick={() => navigate('/login')}
               className="text-sm text-gray-600 underline hover:text-gray-800"
             >
-              Back to Login
+              {t('auth.backToLogin')}
             </button>
           </div>
         </form>

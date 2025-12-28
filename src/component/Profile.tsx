@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import { getProfile, updateProfile } from '../client-configuration/profile-API';
 import { getSavedResumes, deleteResume } from '../client-configuration/resume-API';
+import { useTranslation } from '../locales';
 
 interface ProfileData {
   name: string;
@@ -32,6 +33,7 @@ interface SavedResume {
 }
 
 const Profile: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [savedResumes, setSavedResumes] = useState<SavedResume[]>([]);
@@ -79,7 +81,7 @@ const Profile: React.FC = () => {
         });
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to load profile');
+      setError(err.message || t('profile.failedToLoad'));
     } finally {
       setIsLoading(false);
     }
@@ -105,14 +107,14 @@ const Profile: React.FC = () => {
       
       if (response.success) {
         setProfileData(response.data);
-        setSuccessMessage('Profile updated successfully!');
+        setSuccessMessage(t('profile.updateSuccess'));
         
         setTimeout(() => {
           setSuccessMessage(null);
         }, 3000);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to update profile');
+      setError(err.message || t('profile.updateError'));
     } finally {
       setIsSaving(false);
     }
@@ -178,7 +180,7 @@ const Profile: React.FC = () => {
       if (response.success) {
         // Remove from local state
         setSavedResumes(prev => prev.filter(r => r.resumeId !== resumeId));
-        setSuccessMessage('Resume deleted successfully!');
+        setSuccessMessage(t('profile.deleteSuccess'));
         setDeleteConfirmId(null);
         
         setTimeout(() => {
@@ -186,7 +188,7 @@ const Profile: React.FC = () => {
         }, 3000);
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to delete resume');
+      setError(err.message || t('profile.deleteError'));
       setTimeout(() => {
         setError(null);
       }, 3000);
@@ -196,7 +198,7 @@ const Profile: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
-    if (!dateString) return 'Never';
+    if (!dateString) return t('profile.never');
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -217,7 +219,7 @@ const Profile: React.FC = () => {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            <span>Loading profile...</span>
+            <span>{t('profile.loadingProfile')}</span>
           </div>
         </main>
       </div>
@@ -231,8 +233,8 @@ const Profile: React.FC = () => {
       <main className="px-5 py-8 mx-auto md:py-16 max-w-7xl">
         <div className="max-w-3xl mx-auto">
           <div className="mb-6 md:mb-8">
-            <h1 className="mb-2 text-2xl font-bold text-gray-900 md:text-4xl">My Profile</h1>
-            <p className="text-sm text-gray-600 md:text-base">Manage your account information and preferences</p>
+            <h1 className="mb-2 text-2xl font-bold text-gray-900 md:text-4xl">{t('profile.pageTitle')}</h1>
+            <p className="text-sm text-gray-600 md:text-base">{t('profile.pageSubtitle')}</p>
           </div>
 
           {error && (
@@ -255,10 +257,10 @@ const Profile: React.FC = () => {
                   {profileData?.name?.charAt(0).toUpperCase() || '?'}
                 </div>
                 <div>
-                  <h2 className="text-lg font-bold text-white md:text-2xl">{profileData?.name || 'User'}</h2>
+                  <h2 className="text-lg font-bold text-white md:text-2xl">{profileData?.name || t('profile.user')}</h2>
                   <p className="text-sm text-blue-100 md:text-base">{profileData?.email}</p>
                   <p className="mt-1 text-xs text-blue-200 md:text-sm">
-                    Last login: {formatDate(profileData?.lastLogin || '')}
+                    {t('profile.lastLogin')} {formatDate(profileData?.lastLogin || '')}
                   </p>
                 </div>
               </div>
@@ -270,7 +272,7 @@ const Profile: React.FC = () => {
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div>
                     <label className="block mb-2 text-sm font-semibold text-gray-700">
-                      Full Name
+                      {t('profile.fullName')}
                     </label>
                     <input
                       type="text"
@@ -278,13 +280,13 @@ const Profile: React.FC = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="Enter your full name"
+                      placeholder={t('profile.fullNamePlaceholder')}
                     />
                   </div>
 
                   <div>
                     <label className="block mb-2 text-sm font-semibold text-gray-700">
-                      Phone Number
+                      {t('profile.phoneNumber')}
                     </label>
                     <input
                       type="tel"
@@ -292,14 +294,14 @@ const Profile: React.FC = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                      placeholder="Enter your phone number"
+                      placeholder={t('profile.phoneNumberPlaceholder')}
                     />
                   </div>
                 </div>
 
                 <div>
                   <label className="block mb-2 text-sm font-semibold text-gray-700">
-                    Email Address
+                    {t('profile.emailAddress')}
                   </label>
                   <input
                     type="email"
@@ -307,12 +309,12 @@ const Profile: React.FC = () => {
                     disabled
                     className="w-full px-4 py-3 text-gray-600 border border-gray-300 rounded-lg cursor-not-allowed bg-gray-50"
                   />
-                  <p className="mt-1 text-xs text-gray-500">Email cannot be changed</p>
+                  <p className="mt-1 text-xs text-gray-500">{t('profile.emailCannotChange')}</p>
                 </div>
 
                 <div>
                   <label className="block mb-2 text-sm font-semibold text-gray-700">
-                    Designation / Job Role
+                    {t('profile.designation')}
                   </label>
                   <input
                     type="text"
@@ -320,13 +322,13 @@ const Profile: React.FC = () => {
                     value={formData.designation}
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    placeholder="e.g., Full Stack Developer, UI/UX Designer"
+                    placeholder={t('profile.designationPlaceholder')}
                   />
                 </div>
 
                 <div>
                   <label className="block mb-2 text-sm font-semibold text-gray-700">
-                    Area of Interest / Passion
+                    {t('profile.areaOfInterest')}
                   </label>
                   <select
                     name="areaOfInterest"
@@ -334,31 +336,31 @@ const Profile: React.FC = () => {
                     onChange={handleInputChange}
                     className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   >
-                    <option value="N/A">Select your area of interest</option>
-                    <option value="Developer">Developer</option>
-                    <option value="Designer">Designer</option>
-                    <option value="Data Scientist">Data Scientist</option>
-                    <option value="DevOps Engineer">DevOps Engineer</option>
-                    <option value="Product Manager">Product Manager</option>
-                    <option value="Business Analyst">Business Analyst</option>
-                    <option value="Marketing Specialist">Marketing Specialist</option>
-                    <option value="Content Creator">Content Creator</option>
-                    <option value="Fitness Trainer">Fitness Trainer</option>
-                    <option value="Barber / Stylist">Barber / Stylist</option>
-                    <option value="Chef / Cook">Chef / Cook</option>
-                    <option value="Teacher / Educator">Teacher / Educator</option>
-                    <option value="Photographer">Photographer</option>
-                    <option value="Musician">Musician</option>
-                    <option value="Other">Other</option>
+                    <option value="N/A">{t('profile.selectAreaOfInterest')}</option>
+                    <option value="Developer">{t('profile.developer')}</option>
+                    <option value="Designer">{t('profile.designer')}</option>
+                    <option value="Data Scientist">{t('profile.dataScientist')}</option>
+                    <option value="DevOps Engineer">{t('profile.devOpsEngineer')}</option>
+                    <option value="Product Manager">{t('profile.productManager')}</option>
+                    <option value="Business Analyst">{t('profile.businessAnalyst')}</option>
+                    <option value="Marketing Specialist">{t('profile.marketingSpecialist')}</option>
+                    <option value="Content Creator">{t('profile.contentCreator')}</option>
+                    <option value="Fitness Trainer">{t('profile.fitnessTrainer')}</option>
+                    <option value="Barber / Stylist">{t('profile.barberStylist')}</option>
+                    <option value="Chef / Cook">{t('profile.chefCook')}</option>
+                    <option value="Teacher / Educator">{t('profile.teacherEducator')}</option>
+                    <option value="Photographer">{t('profile.photographer')}</option>
+                    <option value="Musician">{t('profile.musician')}</option>
+                    <option value="Other">{t('profile.other')}</option>
                   </select>
                 </div>
 
                 <div className="pt-4 border-t border-gray-200">
-                  <h3 className="mb-4 text-lg font-semibold text-gray-800">Social Profiles (Optional)</h3>
+                  <h3 className="mb-4 text-lg font-semibold text-gray-800">{t('profile.socialProfiles')}</h3>
                   <div className="space-y-4">
                     <div>
                       <label className="block mb-2 text-sm font-semibold text-gray-700">
-                        LinkedIn Profile
+                        {t('profile.linkedinProfile')}
                       </label>
                       <input
                         type="url"
@@ -366,13 +368,13 @@ const Profile: React.FC = () => {
                         value={formData.linkedinProfile}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        placeholder="https://linkedin.com/in/yourprofile"
+                        placeholder={t('profile.linkedinPlaceholder')}
                       />
                     </div>
 
                     <div>
                       <label className="block mb-2 text-sm font-semibold text-gray-700">
-                        GitHub Profile
+                        {t('profile.githubProfile')}
                       </label>
                       <input
                         type="url"
@@ -380,13 +382,13 @@ const Profile: React.FC = () => {
                         value={formData.githubProfile}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        placeholder="https://github.com/yourusername"
+                        placeholder={t('profile.githubPlaceholder')}
                       />
                     </div>
 
                     <div>
                       <label className="block mb-2 text-sm font-semibold text-gray-700">
-                        Resume Website URL
+                        {t('profile.resumeWebsiteUrl')}
                       </label>
                       <input
                         type="url"
@@ -394,13 +396,13 @@ const Profile: React.FC = () => {
                         value={formData.resumeWebsiteUrl}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        placeholder="https://yourwebsite.com"
+                        placeholder={t('profile.resumeWebsitePlaceholder')}
                       />
                     </div>
 
                     <div>
                       <label className="block mb-2 text-sm font-semibold text-gray-700">
-                        Blog URL
+                        {t('profile.blogUrl')}
                       </label>
                       <input
                         type="url"
@@ -408,7 +410,7 @@ const Profile: React.FC = () => {
                         value={formData.blogUrl}
                         onChange={handleInputChange}
                         className="w-full px-4 py-3 text-gray-900 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                        placeholder="https://yourblog.com"
+                        placeholder={t('profile.blogPlaceholder')}
                       />
                     </div>
                   </div>
@@ -422,7 +424,7 @@ const Profile: React.FC = () => {
                   disabled={isSaving}
                   className="px-6 py-3 font-semibold text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
-                  {isSaving ? 'Saving...' : 'Save Changes'}
+                  {isSaving ? t('profile.saving') : t('profile.saveChanges')}
                 </button>
               </div>
             </form>
@@ -432,17 +434,17 @@ const Profile: React.FC = () => {
           <div className="mt-6 overflow-hidden bg-white shadow-2xl md:mt-8 rounded-2xl">
             <div className="p-4 md:p-8">
               <div className="mb-6">
-                <h2 className="text-xl font-bold text-transparent md:text-2xl bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text">My Resumes</h2>
-                <p className="mt-1 text-sm text-gray-600">View, edit, and manage your saved resumes</p>
+                <h2 className="text-xl font-bold text-transparent md:text-2xl bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text">{t('profile.myResumes')}</h2>
+                <p className="mt-1 text-sm text-gray-600">{t('profile.resumesSubtitle')}</p>
               </div>
               
               {isLoadingResumes ? (
                 <div className="py-8 text-center text-gray-600">
-                  Loading resumes...
+                  {t('profile.loadingResumes')}
                 </div>
               ) : savedResumes.length === 0 ? (
                 <div className="p-8 text-center text-gray-500 bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl">
-                  No resumes found. Create your first resume to get started!
+                  {t('profile.noResumesFound')}
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -454,16 +456,16 @@ const Profile: React.FC = () => {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <h3 className="text-base font-semibold text-gray-900 md:text-lg">
-                            {resume.resumeName || 'Untitled Resume'}
+                            {resume.resumeName || t('profile.untitledResume')}
                           </h3>
                           {resume.isDynamic && (
                             <span className="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
-                              Dynamic
+                              {t('profile.dynamicBadge')}
                             </span>
                           )}
                         </div>
                         <p className="text-xs text-gray-600 md:text-sm">
-                          Created on: {new Date(resume.generatedDate).toLocaleDateString('en-US', {
+                          {t('profile.createdOn')} {new Date(resume.generatedDate).toLocaleDateString('en-US', {
                             year: 'numeric',
                             month: 'long',
                             day: 'numeric',
@@ -472,7 +474,7 @@ const Profile: React.FC = () => {
                           })}
                         </p>
                         <p className="mt-1 text-xs text-gray-500">
-                          Template: {resume.templateName}
+                          {t('profile.template')} {resume.templateName}
                         </p>
                       </div>
                       
@@ -481,19 +483,19 @@ const Profile: React.FC = () => {
                           onClick={() => handlePreviewResume(resume.resumeId)}
                           className="w-full px-4 py-2 text-sm font-medium text-white transition-colors rounded-lg md:w-auto md:px-5 bg-primary-600 hover:bg-primary-700"
                         >
-                          Preview
+                          {t('profile.preview')}
                         </button>
                         <button
                           onClick={() => handleEditResume(resume.resumeId)}
                           className="w-full px-4 py-2 text-sm font-medium transition-colors border rounded-lg md:w-auto md:px-5 text-primary-600 border-primary-600 hover:bg-primary-50"
                         >
-                          Edit
+                          {t('profile.edit')}
                         </button>
                         <button
                           onClick={() => setDeleteConfirmId(resume.resumeId)}
                           className="w-full px-4 py-2 text-sm font-medium text-white transition-colors bg-red-600 rounded-lg md:w-auto md:px-5 hover:bg-red-700"
                         >
-                          Delete
+                          {t('profile.delete')}
                         </button>
                       </div>
                     </div>
@@ -514,9 +516,9 @@ const Profile: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
               <div>
-                <h3 className="text-lg font-bold text-gray-900">Delete Resume</h3>
+                <h3 className="text-lg font-bold text-gray-900">{t('profile.deleteResumeTitle')}</h3>
                 <p className="mt-2 text-sm text-gray-600">
-                  Are you sure you want to delete this resume? This action cannot be undone.
+                  {t('profile.deleteResumeMessage')}
                 </p>
               </div>
             </div>
@@ -527,14 +529,14 @@ const Profile: React.FC = () => {
                 disabled={isDeleting}
                 className="flex-1 px-4 py-2 font-medium text-gray-700 transition-colors border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
               >
-                Cancel
+                {t('profile.cancel')}
               </button>
               <button
                 onClick={() => handleDeleteResume(deleteConfirmId)}
                 disabled={isDeleting}
                 className="flex-1 px-4 py-2 font-medium text-white transition-colors bg-red-600 rounded-lg hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed"
               >
-                {isDeleting ? 'Deleting...' : 'Delete'}
+                {isDeleting ? t('profile.deleting') : t('profile.deleteButton')}
               </button>
             </div>
           </div>
