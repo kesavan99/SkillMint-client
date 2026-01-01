@@ -459,7 +459,6 @@ const JobSearch: React.FC = () => {
                           // Toggle on: set remote
                           setFormData(prev => ({ ...prev, location: 'remote' }));
                           setShowLocationDropdown(false);
-                          setLocationSuggestions([]);
                           setIsRemoteSelected(true);
                         }
                       }}
