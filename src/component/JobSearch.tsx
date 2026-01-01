@@ -43,12 +43,6 @@ interface Job {
   };
 }
 
-interface LocationSuggestion {
-  display_name: string;
-  lat: string;
-  lon: string;
-}
-
 const JobSearch: React.FC = () => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<JobSearchForm>({
@@ -64,11 +58,132 @@ const JobSearch: React.FC = () => {
   const [searchResults, setSearchResults] = useState<Job[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [locationSuggestions, setLocationSuggestions] = useState<LocationSuggestion[]>([]);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [isRemoteSelected, setIsRemoteSelected] = useState(false);
   const locationInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const cities = [
+  "Chennai",
+  "Coimbatore",
+  "Madurai",
+  "Tiruchirappalli",
+  "Salem",
+  "Tirunelveli",
+  "Thoothukudi",
+  "Vellore",
+  "Erode",
+  "Tiruppur",
+  "Thanjavur",
+  "Dindigul",
+  "Karur",
+  "Namakkal",
+  "Kanchipuram",
+  "Tambaram",
+  "Chengalpattu",
+  "Hosur",
+  "Krishnagiri",
+  "Ranipet",
+  "Bengaluru",
+  "Mysuru",
+  "Mangaluru",
+  "Hubballi",
+  "Dharwad",
+  "Belagavi",
+  "Kalaburagi",
+  "Ballari",
+  "Davangere",
+  "Shivamogga",
+  "Tumakuru",
+  "Udupi",
+  "Bidar",
+  "Raichur",
+  "Kolar",
+  "Chikkaballapur",
+  "Hassan",
+  "Mandya",
+  "Chitradurga",
+  "Visakhapatnam",
+  "Vijayawada",
+  "Guntur",
+  "Amaravati",
+  "Tirupati",
+  "Nellore",
+  "Kakinada",
+  "Rajahmundry",
+  "Anantapur",
+  "Kadapa",
+  "Chittoor",
+  "Eluru",
+  "Ongole",
+  "Srikakulam",
+  "Vizianagaram",
+   "Delhi",
+  "Gurugram",
+  "Noida",
+  "Greater Noida",
+  "Faridabad",
+  "Ghaziabad",
+  "Sonipat",
+  "Meerut",
+  "Rohtak",
+  "Panipat",
+   "Visakhapatnam",
+  "Vijayawada",
+  "Guntur",
+  "Amaravati",
+  "Tirupati",
+  "Nellore",
+  "Kakinada",
+  "Rajahmundry",
+  "Eluru",
+  "Ongole",
+  "Chittoor",
+  "Anantapur",
+  "Kadapa",
+  "Srikakulam",
+  "Vizianagaram",
+  "Thiruvananthapuram",
+  "Kochi",
+  "Kozhikode",
+  "Thrissur",
+  "Kollam",
+  "Alappuzha",
+  "Palakkad",
+  "Kannur",
+  "Kottayam",
+  "Malappuram",
+   "United States",
+  "Canada",
+  "United Kingdom",
+  "Germany",
+  "France",
+  "Netherlands",
+  "Sweden",
+  "Switzerland",
+  "Ireland",
+  "Australia",
+  "New Zealand",
+  "India",
+  "China",
+  "Japan",
+  "South Korea",
+  "Singapore",
+  "Malaysia",
+  "Philippines",
+  "Israel",
+  "United Arab Emirates",
+  "Saudi Arabia",
+  "Brazil",
+  "Mexico",
+  "Russia",
+  "Poland",
+  "Ukraine",
+  "Italy",
+  "Spain",
+  "Belgium",
+  "Norway"
+];
 
   // Fetch saved resumes on component mount
   useEffect(() => {
@@ -106,43 +221,18 @@ const JobSearch: React.FC = () => {
       [name]: value,
     }));
 
-    // Fetch location suggestions from OpenStreetMap
-    if (name === 'location' && value.trim().length > 2) {
+    if (name === 'location') {
       setIsRemoteSelected(false);
-      fetchLocationSuggestions(value);
-    } else if (name === 'location') {
-      setLocationSuggestions([]);
-      setShowLocationDropdown(false);
+      setShowLocationDropdown(value.trim().length > 0);
     }
   };
 
-  const fetchLocationSuggestions = async (query: string) => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`,
-        {
-          headers: {
-            'User-Agent': 'SkillMint Job Search App'
-          }
-        }
-      );
-      const data = await response.json();
-      setLocationSuggestions(data);
-      setShowLocationDropdown(data.length > 0);
-    } catch (error) {
-      console.error('Error fetching location suggestions:', error);
-    }
-  };
-
-  const handleLocationSelect = (location: LocationSuggestion) => {
-    // Extract city name (first part before comma)
-    const cityName = location.display_name.split(',')[0].trim();
+  const handleLocationSelect = (city: string) => {
     setFormData(prev => ({
       ...prev,
-      location: cityName,
+      location: city,
     }));
     setShowLocationDropdown(false);
-    setLocationSuggestions([]);
   };
 
   // Close dropdown when clicking outside
@@ -235,7 +325,6 @@ const JobSearch: React.FC = () => {
     setTimeout(() => {
       clearInterval(pollInterval);
       setIsSearching(false);
-      setError('Job search timeout - please try again');
     }, 120000);
   };
 
@@ -391,7 +480,7 @@ const JobSearch: React.FC = () => {
                     value={isRemoteSelected ? '' : formData.location}
                     onChange={handleInputChange}
                     onFocus={() => {
-                      if (locationSuggestions.length > 0) {
+                      if (!isRemoteSelected) {
                         setShowLocationDropdown(true);
                       }
                     }}
@@ -400,34 +489,30 @@ const JobSearch: React.FC = () => {
                     autoComplete="off"
                     disabled={isRemoteSelected}
                   />
-                  {showLocationDropdown && locationSuggestions.length > 0 && (
-                    <div
-                      ref={dropdownRef}
-                      className="absolute z-10 w-full mt-1 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-lg max-h-60"
-                    >
-                      {(() => {
-                        const uniqueCities = new Map<string, LocationSuggestion>();
-                        locationSuggestions.forEach((suggestion) => {
-                          const cityName = suggestion.display_name.split(',')[0].trim();
-                          if (!uniqueCities.has(cityName)) {
-                            uniqueCities.set(cityName, suggestion);
-                          }
-                        });
-                        return Array.from(uniqueCities.entries()).map(([cityName, suggestion], index) => (
+                  {showLocationDropdown && (() => {
+                    const filtered = cities.filter(city => 
+                      city.toLowerCase().includes(formData.location.toLowerCase())
+                    );
+                    return filtered.length > 0 && (
+                      <div
+                        ref={dropdownRef}
+                        className="absolute z-10 w-full mt-1 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-lg max-h-60"
+                      >
+                        {filtered.map((city, index) => (
                           <div
                             key={index}
-                            onClick={() => handleLocationSelect(suggestion)}
+                            onClick={() => handleLocationSelect(city)}
                             className="px-4 py-2 text-sm text-gray-900 cursor-pointer hover:bg-primary-50 hover:text-primary-700"
                           >
                             <div className="flex items-start gap-2">
                               <span className="flex-shrink-0 mt-0.5">📍</span>
-                              <span>{cityName}</span>
+                              <span>{city}</span>
                             </div>
                           </div>
-                        ));
-                      })()}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 
@@ -603,7 +688,7 @@ const JobSearch: React.FC = () => {
                       <div className="flex flex-wrap gap-2 text-sm">
                         {job.location && (
                           <span className="px-3 py-1 text-gray-700 bg-gray-100 rounded-full">
-                            📍 {job.location}
+                            {job.location}
                           </span>
                         )}
                         {job.type && (

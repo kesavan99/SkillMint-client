@@ -432,7 +432,7 @@ export const en = {
     noJobsFound: 'No jobs found. Please try different search criteria.',
     
     // Loading State
-    retrievingJobs: 'Retrieving the top 40+ jobs...',
+    retrievingJobs: 'Retrieving the top jobs...',
     pleaseWait: 'Please wait while we search across multiple pages',
     searchingStatus: 'Searching...',
     
