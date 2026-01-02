@@ -544,7 +544,7 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ isPreviewMode = false }) 
                       </svg>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 leading-relaxed">{template.description}</p>
+                  <p className="text-sm leading-relaxed text-gray-600">{template.description}</p>
                 </div>
               ))}
             </div>
@@ -552,7 +552,7 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ isPreviewMode = false }) 
             <div className="flex flex-col gap-3 mt-4 md:flex-row md:justify-end">
               <button
                 onClick={handleLoadDemoData}
-                className="w-full px-4 py-2 text-sm font-semibold text-white transition-colors rounded-lg md:w-auto bg-green-600 hover:bg-green-700"
+                className="w-full px-4 py-2 text-sm font-semibold text-white transition-colors bg-green-600 rounded-lg md:w-auto hover:bg-green-700"
               >
                 {t('resumeBuilder.loadDemoData')}
               </button>
@@ -838,15 +838,17 @@ const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ isPreviewMode = false }) 
               <button
                 onClick={() => setShowAIAnalysis(!showAIAnalysis)}
                 disabled={!resumeData.personalInfo.name}
-                className="w-full px-4 py-2 text-base font-semibold transition-colors transform border-2 rounded-lg shadow-lg md:w-auto md:px-8 md:py-3 md:text-lg text-primary-600 border-primary-600 hover:bg-primary-50 hover:shadow-xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-2 text-base font-semibold transition-colors transform border-2 rounded-lg shadow-lg md:w-auto md:px-8 md:py-3 md:text-lg text-primary-600 border-primary-600 hover:bg-primary-50 hover:shadow-xl hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
+                <img src="/statistcs.png" alt="AI Analysis" className="w-8 h-8" />
                 {showAIAnalysis ? t('resumeBuilder.hideAIAnalysis') : t('resumeBuilder.showAIAnalysis')}
               </button>
               <button
                 onClick={handlePreview}
                 disabled={!resumeData.personalInfo.name}
-                className="w-full px-4 py-2 text-base font-semibold text-white transition-colors rounded-lg md:w-auto md:px-8 md:py-3 md:text-lg bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400"
+                className="flex items-center justify-center w-full gap-2 px-4 py-2 text-base font-semibold text-white transition-colors rounded-lg md:w-auto md:px-8 md:py-3 md:text-lg bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400"
               >
+                <img src="/preview.png" alt="Preview" className="w-8 h-8" />
                 {t('resumeBuilder.previewResume')}
               </button>
             </div>

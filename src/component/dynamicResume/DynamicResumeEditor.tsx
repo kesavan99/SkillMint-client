@@ -713,7 +713,7 @@ const DynamicResumeEditor: React.FC = () => {
                 onClick={() => setShowAIAnalysis(true)}
                 className="flex items-center gap-1 px-3 py-2 text-sm text-white bg-purple-500 rounded-lg sm:gap-2 sm:px-4 hover:bg-purple-600"
               >
-                <img src="/statistcs.png" alt="AI" className="w-4 h-4" />
+                <img src="/statistcs.png" alt="AI" className="w-8 h-8" />
                 <span className="hidden sm:inline">{t('dynamicResumeEditor.aiAnalysis')}</span>
               </button>
 
@@ -721,8 +721,8 @@ const DynamicResumeEditor: React.FC = () => {
                 onClick={handleOpenSaveDialog}
                 className="flex items-center gap-1 px-3 py-2 text-sm text-white bg-blue-500 rounded-lg sm:gap-2 sm:px-4 hover:bg-blue-600"
               >
-                <span className="hidden sm:inline">💾 {t('dynamicResumeEditor.save')}</span>
-                <span className="sm:hidden">💾</span>
+                <img src="/save.png" alt="Save" className="w-8 h-8" />
+                <span className="hidden sm:inline">{t('dynamicResumeEditor.save')}</span>
               </button>
               
               <button 
@@ -730,9 +730,8 @@ const DynamicResumeEditor: React.FC = () => {
                 disabled={loading}
                 className="flex items-center gap-1 px-4 py-2 text-sm text-white bg-green-500 rounded-lg sm:gap-2 sm:px-6 sm:text-base hover:bg-green-600 disabled:opacity-50"
               >
+                <img src="/download.png" alt="Download" className="w-8 h-8" />
                 <span className="hidden sm:inline">{loading ? t('dynamicResumeEditor.generating') : t('dynamicResumeEditor.download')}</span>
-                <span className="sm:hidden">⬇</span>
-                <span className="hidden sm:inline">⬇</span>
               </button>
             </div>
           </div>

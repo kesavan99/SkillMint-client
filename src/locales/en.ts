@@ -344,7 +344,7 @@ export const en = {
     // Action Buttons
     showAIAnalysis: 'Show AI Analysis',
     hideAIAnalysis: 'Hide AI Analysis',
-    previewResume: '👁️ Preview Resume',
+    previewResume: 'Preview Resume',
     
     // AI Analysis Sidebar
     aiAnalysisTitle: 'AI Analysis',
