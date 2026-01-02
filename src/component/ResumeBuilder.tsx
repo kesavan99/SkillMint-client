@@ -60,7 +60,11 @@ interface AnalysisResult {
   matchPercentage: number;
 }
 
-const ResumeBuilder: React.FC = () => {
+interface ResumeBuilderProps {
+  isPreviewMode?: boolean;
+}
+
+const ResumeBuilder: React.FC<ResumeBuilderProps> = ({ isPreviewMode = false }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const resumeIdFromUrl = searchParams.get('resumeId');
@@ -137,6 +141,9 @@ const ResumeBuilder: React.FC = () => {
   }, [experienceLevel]);
   // Load existing resume if editing
   useEffect(() => {
+    // Skip API calls in preview mode
+    if (isPreviewMode) return;
+    
     const loadExistingResume = async () => {
       if (editingResumeId) {
         setIsLoadingResume(true);
@@ -161,9 +168,11 @@ const ResumeBuilder: React.FC = () => {
     };
 
     loadExistingResume();
-  }, [editingResumeId]);
+  }, [editingResumeId, isPreviewMode]);
   // Handle PDF upload
   const handlePdfUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (isPreviewMode) return;
+    
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -371,6 +380,8 @@ const ResumeBuilder: React.FC = () => {
 
   // Handle AI Analysis
   const handleAnalyze = async () => {
+    if (isPreviewMode) return;
+    
     if (!jobRole.trim() || !experienceLevel) {
       setAnalysisError(t('resumeBuilder.fillAllFields'));
       return;

@@ -123,6 +123,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     })();
 
+    // Clear ATS settings from localStorage
+    localStorage.removeItem('atsWeights');
+    
     setToken(null);
     setIsAuthenticated(false);
   };

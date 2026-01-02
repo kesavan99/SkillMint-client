@@ -43,6 +43,24 @@ interface Job {
   };
 }
 
+interface ATSWeights {
+  skills: number;
+  experience: number;
+  projects: number;
+  keywords: number;
+  summary: number;
+  education: number;
+}
+
+const DEFAULT_WEIGHTS: ATSWeights = {
+  skills: 0.35,
+  experience: 0.30,
+  projects: 0.15,
+  keywords: 0.10,
+  summary: 0.05,
+  education: 0.05
+};
+
 const JobSearch: React.FC = () => {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<JobSearchForm>({
@@ -60,7 +78,11 @@ const JobSearch: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
   const [isRemoteSelected, setIsRemoteSelected] = useState(false);
+  const [atsWeights, setAtsWeights] = useState<ATSWeights>(DEFAULT_WEIGHTS);
   const locationInputRef = useRef<HTMLInputElement>(null);
+
+  // Check if any single weight is 100%
+  const hasMaxWeightWarning = Object.values(atsWeights).some(weight => weight >= 1.0);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const cities = [
@@ -204,6 +226,23 @@ const JobSearch: React.FC = () => {
     fetchResumes();
   }, []);
 
+  // Load ATS weights from localStorage
+  useEffect(() => {
+    const savedWeights = localStorage.getItem('atsWeights');
+    if (savedWeights) {
+      try {
+        setAtsWeights(JSON.parse(savedWeights));
+      } catch (e) {
+        console.error('Failed to parse saved weights:', e);
+      }
+    }
+  }, []);
+
+  // Save ATS weights to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('atsWeights', JSON.stringify(atsWeights));
+  }, [atsWeights]);
+
   const experienceLevels = Array.from({ length: 31 }, (_, i) => i);
 
   const jobTypes = [
@@ -224,6 +263,46 @@ const JobSearch: React.FC = () => {
     if (name === 'location') {
       setIsRemoteSelected(false);
       setShowLocationDropdown(value.trim().length > 0);
+    }
+  };
+
+  const handleWeightChange = (key: keyof ATSWeights, value: number) => {
+    setAtsWeights(prev => {
+      const remaining = 1 - value;
+      const otherKeys = Object.keys(prev).filter(k => k !== key) as (keyof ATSWeights)[];
+      const otherTotal = otherKeys.reduce((sum, k) => sum + prev[k], 0);
+      
+      // Distribute remaining weight proportionally among other keys
+      const newWeights: ATSWeights = { ...prev, [key]: value };
+      
+      if (otherTotal > 0) {
+        otherKeys.forEach(k => {
+          newWeights[k] = (prev[k] / otherTotal) * remaining;
+        });
+      } else {
+        // If all others are 0, distribute equally
+        const equalShare = remaining / otherKeys.length;
+        otherKeys.forEach(k => {
+          newWeights[k] = equalShare;
+        });
+      }
+      
+      return newWeights;
+    });
+  };
+
+  const resetWeightsToDefault = () => {
+    setAtsWeights(DEFAULT_WEIGHTS);
+  };
+
+  const normalizeWeights = () => {
+    const total = Object.values(atsWeights).reduce((sum, val) => sum + val, 0);
+    if (Math.abs(total - 1.0) > 0.01) {
+      const normalized: ATSWeights = {} as ATSWeights;
+      Object.keys(atsWeights).forEach(key => {
+        normalized[key as keyof ATSWeights] = atsWeights[key as keyof ATSWeights] / total;
+      });
+      setAtsWeights(normalized);
     }
   };
 
@@ -259,6 +338,9 @@ const JobSearch: React.FC = () => {
       return;
     }
     
+    // Normalize weights before sending
+    normalizeWeights();
+    
     setIsSearching(true);
     setError(null);
     setSearchResults([]); // Clear previous results
@@ -272,6 +354,7 @@ const JobSearch: React.FC = () => {
         location: formData.location,
         jobType: formData.jobType,
         resumeId: formData.resumeId,
+        atsWeights: atsWeights
       });
 
       if (response.success && response.taskId) {
@@ -347,12 +430,95 @@ const JobSearch: React.FC = () => {
 
       <main className="px-5 py-16 mx-auto max-w-7xl">
         <div className="mb-8 text-center">
+          <div className="flex justify-center mb-4">
+            <img src="/job-portal-search.png" alt="Job Search" className="w-16 h-16" />
+          </div>
           <h1 className="mb-3 text-3xl font-bold text-white md:text-4xl">{t('jobSearch.title')}</h1>
           <p className="text-lg text-white/90">{t('jobSearch.subtitle')}</p>
         </div>
 
-        <div className="flex flex-col gap-6">
-          <div className="w-full">
+        <div className="flex flex-col gap-6 lg:flex-row">
+          {/* ATS Settings Panel - Left Side */}
+          <div className="lg:w-80">
+            <div className="sticky p-6 bg-white shadow-xl top-6 rounded-2xl">
+              <div className="flex items-center gap-2 mb-4">
+                <img src="/testing.png" alt="Settings" className="w-6 h-6" />
+                <h3 className="text-lg font-bold text-gray-800">ATS Settings</h3>
+              </div>
+              
+              <div className="space-y-4">
+                  <p className="text-xs text-gray-600">Configure how resume scores are calculated. Total must equal 100%.</p>
+                  
+                  {hasMaxWeightWarning && (
+                    <div className="p-3 border-l-4 border-orange-500 rounded-r-lg bg-orange-50">
+                      <div className="flex items-start">
+                        <span className="mr-2 text-orange-600">⚠️</span>
+                        <p className="text-xs text-orange-800">
+                          <strong>Warning:</strong> Setting only one weight to 100% may not provide balanced ATS scoring. Consider distributing weights across multiple factors.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {Object.keys(atsWeights).map((key) => {
+                    const weightKey = key as keyof ATSWeights;
+                    const percentage = Math.round(atsWeights[weightKey] * 100);
+                    return (
+                      <div key={key} className="space-y-1">
+                        <div className="flex items-center justify-between">
+                          <label className="text-sm font-medium text-gray-700 capitalize">
+                            {key}
+                          </label>
+                          <span className="text-sm font-bold text-primary-600">{percentage}%</span>
+                        </div>
+                        <input
+                          type="range"
+                          min="0"
+                          max="100"
+                          value={percentage}
+                          onChange={(e) => handleWeightChange(weightKey, parseInt(e.target.value) / 100)}
+                          className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                          style={{
+                            background: `linear-gradient(to right, #059669 0%, #059669 ${percentage}%, #e5e7eb ${percentage}%, #e5e7eb 100%)`
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                  
+                  <div className="pt-3 mt-4 border-t border-gray-200">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-sm font-medium text-gray-700">Total:</span>
+                      <span className={`text-sm font-bold ${
+                        Math.abs(Object.values(atsWeights).reduce((sum, val) => sum + val, 0) - 1.0) < 0.01
+                          ? 'text-green-600'
+                          : 'text-red-600'
+                      }`}>
+                        {Math.round(Object.values(atsWeights).reduce((sum, val) => sum + val, 0) * 100)}%
+                      </span>
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <button
+                        onClick={normalizeWeights}
+                        className="flex-1 px-3 py-2 text-xs font-medium text-white transition-colors rounded-lg bg-primary-600 hover:bg-primary-700"
+                      >
+                        Normalize
+                      </button>
+                      <button
+                        onClick={resetWeightsToDefault}
+                        className="flex-1 px-3 py-2 text-xs font-medium text-gray-700 transition-colors bg-gray-100 rounded-lg hover:bg-gray-200"
+                      >
+                        Reset Default
+                      </button>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+
+          {/* Main Content - Right Side */}
+          <div className="flex-1">
             {/* Search Form */}
             <div className="p-6 mb-8 bg-white shadow-xl md:p-8 rounded-2xl">
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -462,12 +628,13 @@ const JobSearch: React.FC = () => {
                           setIsRemoteSelected(true);
                         }
                       }}
-                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-all ${
+                      className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all ${
                         isRemoteSelected
                           ? 'bg-primary-600 text-white'
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                     >
+                      <img src="/remote-job.png" alt="Remote" className="w-8 h-8" />
                       {t('jobSearch.remoteButton')}
                     </button>
                   </div>
@@ -633,55 +800,101 @@ const JobSearch: React.FC = () => {
 
                       {/* ATS Analysis Details */}
                       {job.atsAnalysis && (
-                        <div className="p-4 mt-2 space-y-3 border-t border-gray-200 bg-gray-50 rounded-xl">
-                          <h4 className="font-semibold text-gray-800">📊 ATS Analysis</h4>
-                          
-                          {job.atsAnalysis.matched_skills.length > 0 && (
-                            <div>
-                              <p className="mb-2 text-sm font-medium text-green-700">✅ Matched Skills:</p>
-                              <div className="flex flex-wrap gap-1">
-                                {job.atsAnalysis.matched_skills.slice(0, 5).map((skill, idx) => (
-                                  <span key={idx} className="px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">
-                                    {skill}
-                                  </span>
-                                ))}
-                                {job.atsAnalysis.matched_skills.length > 5 && (
-                                  <span className="px-2 py-1 text-xs font-medium text-gray-600">
-                                    +{job.atsAnalysis.matched_skills.length - 5} more
-                                  </span>
-                                )}
+                        <div className="mt-2 overflow-hidden border border-gray-200 rounded-xl">
+                          <div className="flex flex-col gap-4 p-4 md:flex-row">
+                            {/* Left side - Skills and Recommendations */}
+                            <div className="flex-1 space-y-3">
+                              <h4 className="font-semibold text-gray-800">📊 ATS Analysis</h4>
+                              
+                              {job.atsAnalysis.matched_skills.length > 0 && (
+                                <div>
+                                  <p className="mb-2 text-sm font-medium text-green-700">✅ Matched Skills:</p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {job.atsAnalysis.matched_skills.slice(0, 5).map((skill, idx) => (
+                                      <span key={idx} className="px-2 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">
+                                        {skill}
+                                      </span>
+                                    ))}
+                                    {job.atsAnalysis.matched_skills.length > 5 && (
+                                      <span className="px-2 py-1 text-xs font-medium text-gray-600">
+                                        +{job.atsAnalysis.matched_skills.length - 5} more
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {job.atsAnalysis.missing_skills.length > 0 && (
+                                <div>
+                                  <p className="mb-2 text-sm font-medium text-amber-700">⚠️ Missing Skills:</p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {job.atsAnalysis.missing_skills.slice(0, 5).map((skill, idx) => (
+                                      <span key={idx} className="px-2 py-1 text-xs font-medium rounded-full text-amber-800 bg-amber-100">
+                                        {skill}
+                                      </span>
+                                    ))}
+                                    {job.atsAnalysis.missing_skills.length > 5 && (
+                                      <span className="px-2 py-1 text-xs font-medium text-gray-600">
+                                        +{job.atsAnalysis.missing_skills.length - 5} more
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+
+                              {job.atsAnalysis.recommendations && job.atsAnalysis.recommendations.length > 0 && (
+                                <div>
+                                  <p className="mb-2 text-sm font-medium text-blue-700">💡 Recommendations:</p>
+                                  <ul className="space-y-1 text-xs text-gray-700 list-disc list-inside">
+                                    {job.atsAnalysis.recommendations.slice(0, 2).map((rec, idx) => (
+                                      <li key={idx}>{rec}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Right side - Overall Match Score */}
+                            <div className="flex items-center justify-center md:w-48">
+                              <div className={`flex flex-col items-center justify-center w-40 h-40 rounded-full ${
+                                job.atsAnalysis.overall_match_percentage >= 75 ? 'bg-gradient-to-br from-green-100 to-green-200 border-4 border-green-400' :
+                                job.atsAnalysis.overall_match_percentage >= 50 ? 'bg-gradient-to-br from-yellow-100 to-yellow-200 border-4 border-yellow-400' :
+                                job.atsAnalysis.overall_match_percentage >= 35 ? 'bg-gradient-to-br from-orange-100 to-orange-200 border-4 border-orange-400' :
+                                'bg-gradient-to-br from-red-100 to-red-200 border-4 border-red-400'
+                              }`}>
+                                <div className="text-center">
+                                  <div className={`text-5xl font-bold ${
+                                    job.atsAnalysis.overall_match_percentage >= 75 ? 'text-green-700' :
+                                    job.atsAnalysis.overall_match_percentage >= 50 ? 'text-yellow-700' :
+                                    job.atsAnalysis.overall_match_percentage >= 35 ? 'text-orange-700' :
+                                    'text-red-700'
+                                  }`}>
+                                    {Math.round(job.atsAnalysis.overall_match_percentage)}
+                                  </div>
+                                  <div className={`text-xl font-semibold ${
+                                    job.atsAnalysis.overall_match_percentage >= 75 ? 'text-green-600' :
+                                    job.atsAnalysis.overall_match_percentage >= 50 ? 'text-yellow-600' :
+                                    job.atsAnalysis.overall_match_percentage >= 35 ? 'text-orange-600' :
+                                    'text-red-600'
+                                  }`}>
+                                    %
+                                  </div>
+                                  <div className={`text-xs font-medium mt-1 ${
+                                    job.atsAnalysis.overall_match_percentage >= 75 ? 'text-green-700' :
+                                    job.atsAnalysis.overall_match_percentage >= 50 ? 'text-yellow-700' :
+                                    job.atsAnalysis.overall_match_percentage >= 35 ? 'text-orange-700' :
+                                    'text-red-700'
+                                  }`}>
+                                    {job.atsAnalysis.overall_match_percentage === 100 ? 'Perfect Match!' :
+                                     job.atsAnalysis.overall_match_percentage >= 75 ? 'Excellent' :
+                                     job.atsAnalysis.overall_match_percentage >= 50 ? 'Good Match' :
+                                     job.atsAnalysis.overall_match_percentage >= 35 ? 'Fair Match' :
+                                     'Low Match'}
+                                  </div>
+                                </div>
                               </div>
                             </div>
-                          )}
-
-                          {job.atsAnalysis.missing_skills.length > 0 && (
-                            <div>
-                              <p className="mb-2 text-sm font-medium text-amber-700">⚠️ Missing Skills:</p>
-                              <div className="flex flex-wrap gap-1">
-                                {job.atsAnalysis.missing_skills.slice(0, 5).map((skill, idx) => (
-                                  <span key={idx} className="px-2 py-1 text-xs font-medium rounded-full text-amber-800 bg-amber-100">
-                                    {skill}
-                                  </span>
-                                ))}
-                                {job.atsAnalysis.missing_skills.length > 5 && (
-                                  <span className="px-2 py-1 text-xs font-medium text-gray-600">
-                                    +{job.atsAnalysis.missing_skills.length - 5} more
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          )}
-
-                          {job.atsAnalysis.recommendations && job.atsAnalysis.recommendations.length > 0 && (
-                            <div>
-                              <p className="mb-2 text-sm font-medium text-blue-700">💡 Recommendations:</p>
-                              <ul className="space-y-1 text-xs text-gray-700 list-disc list-inside">
-                                {job.atsAnalysis.recommendations.slice(0, 2).map((rec, idx) => (
-                                  <li key={idx}>{rec}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
+                          </div>
                         </div>
                       )}
                       <div className="flex flex-wrap gap-2 text-sm">
@@ -706,8 +919,9 @@ const JobSearch: React.FC = () => {
                           </span>
                         )}
                         {job.source && (
-                          <span className="px-3 py-1 text-blue-700 bg-blue-100 rounded-full">
-                            🔍 {job.source}
+                          <span className="flex items-center gap-1 px-3 py-1 text-blue-700 bg-blue-100 rounded-full">
+                            <img src="/job-search.png" alt="Source" className="w-4 h-4" />
+                            {job.source}
                           </span>
                         )}
                         {job.postedDate && (
@@ -730,7 +944,9 @@ const JobSearch: React.FC = () => {
 
           {searchResults.length === 0 && !isSearching && (
             <div className="p-8 text-center bg-white shadow-xl rounded-2xl">
-              <div className="mb-4 text-6xl">💼</div>
+              <div className="flex justify-center mb-4">
+                <img src="/job-icon.png" alt="Job Search" className="w-24 h-24" />
+              </div>
               <h3 className="mb-2 text-xl font-semibold text-gray-800">{t('jobSearch.readyToFind')}</h3>
               <p className="text-gray-600">{t('jobSearch.fillFormPrompt')}</p>
             </div>

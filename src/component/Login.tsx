@@ -258,19 +258,27 @@ const Login = () => {
           
           <div className="grid max-w-md grid-cols-2 gap-6 mx-auto mt-12">
             <div className="p-5 border bg-white/10 backdrop-blur-sm rounded-xl border-white/20">
-              <div className="mb-3 text-3xl">📝</div>
+              <div className="flex justify-center mb-3">
+                <img src="/create.png" alt="Resume Builder" className="w-12 h-12" />
+              </div>
               <p className="text-sm font-medium">{t('auth.smartResumeBuilder')}</p>
             </div>
             <div className="p-5 border bg-white/10 backdrop-blur-sm rounded-xl border-white/20">
-              <div className="mb-3 text-3xl">🤖</div>
+              <div className="flex justify-center mb-3">
+                <img src="/statistcs.png" alt="AI Analysis" className="w-12 h-12" />
+              </div>
               <p className="text-sm font-medium">{t('auth.aiAnalysisFeature')}</p>
             </div>
             <div className="p-5 border bg-white/10 backdrop-blur-sm rounded-xl border-white/20">
-              <div className="mb-3 text-3xl">🎨</div>
+              <div className="flex justify-center mb-3">
+                <img src="/paint-palette.png" alt="Templates" className="w-12 h-12" />
+              </div>
               <p className="text-sm font-medium">{t('auth.proTemplates')}</p>
             </div>
             <div className="p-5 border bg-white/10 backdrop-blur-sm rounded-xl border-white/20">
-              <div className="mb-3 text-3xl">⚡</div>
+              <div className="flex justify-center mb-3">
+                <img src="/download.png" alt="Download" className="w-12 h-12" />
+              </div>
               <p className="text-sm font-medium">{t('auth.instantDownload')}</p>
             </div>
           </div>
@@ -571,8 +579,9 @@ const Login = () => {
                 setAdminUsername('');
                 setAdminPassword('');
               }}
-              className="text-xs text-gray-500 transition-colors hover:text-gray-700"
+              className="flex items-center justify-center gap-1.5 mx-auto text-xs text-gray-500 transition-colors hover:text-gray-700"
             >
+              {!showAdminLogin && <img src="/database-user.png" alt="Admin" className="w-8 h-8" />}
               {showAdminLogin ? t('auth.backToUserLogin') : t('auth.adminLoginLink')}
             </button>
           </div>

@@ -53,34 +53,30 @@ const Navbar: React.FC = () => {
           >
             {t('navbar.home')}
           </button>
-          {isAuthenticated && (
-            <>
-              <button 
-                onClick={() => navigate('/resume-builder')}
-                className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
-              >
-                {t('navbar.resume')}
-              </button>
-              <button 
-                onClick={() => navigate('/dynamic-resume-builder')}
-                className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
-              >
-                {t('navbar.dynamicResume')}
-              </button>
-              <button 
-                onClick={() => navigate('/profile')}
-                className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
-              >
-                {t('navbar.profile')}
-              </button>
-              <button 
-                onClick={() => navigate('/job-search')}
-                className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
-              >
-                {t('navbar.jobSearch')}
-              </button>
-            </>
-          )}
+          <button 
+            onClick={() => navigate('/resume-builder')}
+            className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+          >
+            {t('navbar.resume')}
+          </button>
+          <button 
+            onClick={() => navigate('/dynamic-resume-builder')}
+            className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+          >
+            {t('navbar.dynamicResume')}
+          </button>
+          <button 
+            onClick={() => navigate('/profile')}
+            className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+          >
+            {t('navbar.profile')}
+          </button>
+          <button 
+            onClick={() => navigate('/job-search')}
+            className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
+          >
+            {t('navbar.jobSearch')}
+          </button>
           <button 
             onClick={() => navigate('/about')}
             className="text-base font-medium text-gray-700 transition-colors hover:text-primary-600"
@@ -138,34 +134,30 @@ const Navbar: React.FC = () => {
             >
               {t('navbar.home')}
             </button>
-            {isAuthenticated && (
-              <>
-                <button
-                  onClick={() => handleNavClick('/resume-builder')}
-                  className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
-                >
-                  {t('navbar.resume')}
-                </button>
-                <button
-                  onClick={() => handleNavClick('/dynamic-resume-builder')}
-                  className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
-                >
-                  {t('navbar.dynamicResume')}
-                </button>
-                <button
-                  onClick={() => handleNavClick('/profile')}
-                  className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
-                >
-                  {t('navbar.profile')}
-                </button>
-                <button
-                  onClick={() => handleNavClick('/job-search')}
-                  className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
-                >
-                  {t('navbar.jobSearch')}
-                </button>
-              </>
-            )}
+            <button
+              onClick={() => handleNavClick('/resume-builder')}
+              className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
+            >
+              {t('navbar.resume')}
+            </button>
+            <button
+              onClick={() => handleNavClick('/dynamic-resume-builder')}
+              className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
+            >
+              {t('navbar.dynamicResume')}
+            </button>
+            <button
+              onClick={() => handleNavClick('/profile')}
+              className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
+            >
+              {t('navbar.profile')}
+            </button>
+            <button
+              onClick={() => handleNavClick('/job-search')}
+              className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"
+            >
+              {t('navbar.jobSearch')}
+            </button>
             <button
               onClick={() => handleNavClick('/about')}
               className="px-4 py-3 text-base font-medium text-left text-gray-700 transition-colors rounded-lg hover:bg-primary-50 hover:text-primary-600"

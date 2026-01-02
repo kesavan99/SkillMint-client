@@ -703,7 +703,7 @@ const TwoSideResume: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: 'var(--bg-gradient-green)' }}>
       <Navbar />
       
       {/* Success Message Banner */}
@@ -807,8 +807,8 @@ const TwoSideResume: React.FC = () => {
                 onClick={() => setShowAIAnalysis(true)}
                 className="flex items-center gap-1 px-3 py-2 text-sm text-white bg-purple-500 rounded-lg sm:gap-2 sm:px-4 hover:bg-purple-600"
               >
-                <span className="hidden sm:inline">🤖 AI Analysis</span>
-                <span className="sm:hidden">🤖</span>
+                <img src="/statistcs.png" alt="AI" className="w-4 h-4" />
+                <span className="hidden sm:inline">AI Analysis</span>
               </button>
 
               <button 
@@ -1449,7 +1449,8 @@ const TwoSideResume: React.FC = () => {
               value={resumeName}
               onChange={(e) => setResumeName(e.target.value)}
               placeholder="Enter resume name"
-              className="w-full px-4 py-2 mb-4 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 mb-4 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              style={{ color: '#000', backgroundColor: '#fff' }}
             />
             <div className="flex gap-3">
               <button

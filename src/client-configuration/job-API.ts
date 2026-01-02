@@ -18,6 +18,14 @@ export const jobSearchAPI = {
     location?: string;
     jobType?: string;
     resumeId?: string;
+    atsWeights?: {
+      skills: number;
+      experience: number;
+      projects: number;
+      keywords: number;
+      summary: number;
+      education: number;
+    };
   }) => {
     try {
       const response = await authenticatedFetch(`${API_BASE}/search`, {

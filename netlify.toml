@@ -46,6 +46,60 @@
   to = "/.netlify/images?url=/:splat&w=600&q=85&fit=contain"
   status = 200
 
+# Profile icon optimization
+[[redirects]]
+  from = "/images/profile/*"
+  to = "/.netlify/images?url=/:splat&w=64&h=64&fit=contain"
+  status = 200
+
+# CV/Resume icon optimization
+[[redirects]]
+  from = "/images/cv/*"
+  to = "/.netlify/images?url=/:splat&w=64&h=64&fit=contain"
+  status = 200
+
+# Paint palette icon optimization
+[[redirects]]
+  from = "/images/paint-palette/*"
+  to = "/.netlify/images?url=/:splat&w=64&h=64&fit=contain"
+  status = 200
+
+# Job/briefcase icon optimization
+[[redirects]]
+  from = "/images/job/*"
+  to = "/.netlify/images?url=/:splat&w=64&h=64&fit=contain"
+  status = 200
+
+# Professional development icon optimization
+[[redirects]]
+  from = "/images/professional-development/*"
+  to = "/.netlify/images?url=/:splat&w=40&h=40&fit=contain"
+  status = 200
+
+# Statistics icon optimization
+[[redirects]]
+  from = "/images/statistcs/*"
+  to = "/.netlify/images?url=/:splat&w=40&h=40&fit=contain"
+  status = 200
+
+# Target icon optimization
+[[redirects]]
+  from = "/images/target/*"
+  to = "/.netlify/images?url=/:splat&w=40&h=40&fit=contain"
+  status = 200
+
+# Testing/settings icon optimization
+[[redirects]]
+  from = "/images/testing/*"
+  to = "/.netlify/images?url=/:splat&w=24&h=24&fit=contain"
+  status = 200
+
+# Job search icon optimization
+[[redirects]]
+  from = "/images/job-search/*"
+  to = "/.netlify/images?url=/:splat&w=16&h=16&fit=contain"
+  status = 200
+
 # Custom Headers for Images
 [[headers]]
   for = "/*.png"

@@ -42,17 +42,23 @@ const Home: React.FC = () => {
 
             <div className="grid grid-cols-1 gap-8 mt-16 md:grid-cols-3">
               <div className="p-6 bg-white shadow-lg rounded-xl">
-                <div className="mb-4 text-4xl">📄</div>
+                <div className="flex justify-center mb-4">
+                  <img src="/professional-development.png" alt="Professional Templates" className="w-16 h-16" />
+                </div>
                 <h3 className="mb-2 text-xl font-semibold text-gray-800">Professional Templates</h3>
                 <p className="text-gray-600">Choose from multiple ATS-optimized resume templates</p>
               </div>
               <div className="p-6 bg-white shadow-lg rounded-xl">
-                <div className="mb-4 text-4xl">🤖</div>
+                <div className="flex justify-center mb-4">
+                  <img src="/statistcs.png" alt="AI-Powered" className="w-16 h-16" />
+                </div>
                 <h3 className="mb-2 text-xl font-semibold text-gray-800">AI-Powered Builder</h3>
                 <p className="text-gray-600">Smart suggestions and content optimization</p>
               </div>
               <div className="p-6 bg-white shadow-lg rounded-xl">
-                <div className="mb-4 text-4xl">💼</div>
+                <div className="flex justify-center mb-4">
+                  <img src="/abilities.png" alt="Job Search" className="w-16 h-16" />
+                </div>
                 <h3 className="mb-2 text-xl font-semibold text-gray-800">Job Search Integration</h3>
                 <p className="text-gray-600">Find opportunities across top job platforms</p>
               </div>
@@ -64,7 +70,9 @@ const Home: React.FC = () => {
             className="p-8 transition-all duration-300 bg-white border border-transparent cursor-pointer rounded-2xl hover:shadow-2xl hover:-translate-y-2 hover:border-purple-200 bg-gradient-to-br from-white to-purple-50"
             onClick={() => navigate('/profile')}
           >
-            <div className="mb-5 text-5xl text-center">👤</div>
+            <div className="flex justify-center mb-5">
+              <img src="/profile.png" alt="Profile" className="w-16 h-16" />
+            </div>
             <h3 className="mb-4 text-xl font-semibold text-center text-gray-800">My Profile</h3>
             <p className="text-base leading-relaxed text-center text-gray-600">
               Manage your account details, designation, and area of interest.
@@ -75,7 +83,9 @@ const Home: React.FC = () => {
             className="p-8 transition-all duration-300 bg-white border border-transparent cursor-pointer rounded-2xl hover:shadow-2xl hover:-translate-y-2 hover:border-blue-200 bg-gradient-to-br from-white to-blue-50"
             onClick={() => navigate('/resume-builder')}
           >
-            <div className="mb-5 text-5xl text-center">📄</div>
+            <div className="flex justify-center mb-5">
+              <img src="/cv.png" alt="Resume" className="w-16 h-16" />
+            </div>
             <h3 className="mb-4 text-xl font-semibold text-center text-gray-800">Resume Builder</h3>
             <p className="text-base leading-relaxed text-center text-gray-600">
               Create professional resumes with our AI-powered builder and choose from multiple templates.
@@ -91,7 +101,9 @@ const Home: React.FC = () => {
                 ✨ NEW
               </span>
             </div>
-            <div className="mb-5 text-5xl text-center">🎨</div>
+            <div className="flex justify-center mb-5">
+              <img src="/paint-palette.png" alt="Dynamic Resume" className="w-16 h-16" />
+            </div>
             <h3 className="mb-4 text-xl font-semibold text-center text-gray-800">Dynamic Resume Builder</h3>
             <p className="text-base leading-relaxed text-center text-gray-600">
               Create custom resumes with flexible section ordering. Choose what comes first - education, projects, or hobbies!
@@ -102,7 +114,9 @@ const Home: React.FC = () => {
             className="p-8 transition-all duration-300 bg-white border border-transparent cursor-pointer rounded-2xl hover:shadow-2xl hover:-translate-y-2 hover:border-green-200 bg-gradient-to-br from-white to-green-50"
             onClick={() => navigate('/job-search')}
           >
-            <div className="mb-5 text-5xl text-center">💼</div>
+            <div className="flex justify-center mb-5">
+              <img src="/job.png" alt="Job Search" className="w-16 h-16" />
+            </div>
             <h3 className="mb-4 text-xl font-semibold text-center text-gray-800">Job Search</h3>
             <p className="text-base leading-relaxed text-center text-gray-600">
               Search for your dream job based on role, designation, and experience level.
@@ -116,17 +130,23 @@ const Home: React.FC = () => {
             <h2 className="mb-12 text-2xl font-bold text-center text-gray-900 md:text-3xl">Why Choose SkillMint?</h2>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8">
               <div className="p-6 text-center transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-2xl hover:-translate-y-1">
-                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-3xl bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl">🎓</div>
+                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl">
+                  <img src="/professional-development.png" alt="Professional Templates" className="w-10 h-10" />
+                </div>
                 <h3 className="mb-3 text-lg font-semibold text-gray-800 md:text-xl">Professional Templates</h3>
                 <p className="text-sm text-gray-600 md:text-base">Choose from professionally designed resume templates that are optimized for ATS and crafted by industry experts.</p>
               </div>
               <div className="p-6 text-center transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-2xl hover:-translate-y-1">
-                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-3xl bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl">⚡</div>
+                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl">
+                  <img src="/statistcs.png" alt="AI-Powered Analysis" className="w-10 h-10" />
+                </div>
                 <h3 className="mb-3 text-lg font-semibold text-gray-800 md:text-xl">AI-Powered Analysis</h3>
                 <p className="text-sm text-gray-600 md:text-base">Get intelligent AI analysis of your resume with personalized recommendations to improve content and presentation.</p>
               </div>
               <div className="p-6 text-center transition-all duration-300 bg-white shadow-lg rounded-xl hover:shadow-2xl hover:-translate-y-1">
-                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 text-3xl bg-gradient-to-br from-green-400 to-green-600 rounded-2xl">🚀</div>
+                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl">
+                  <img src="/target.png" alt="Career Ready" className="w-10 h-10" />
+                </div>
                 <h3 className="mb-3 text-lg font-semibold text-gray-800 md:text-xl">Career Ready</h3>
                 <p className="text-sm text-gray-600 md:text-base">Create standout resumes that help you land interviews and advance your career with confidence.</p>
               </div>

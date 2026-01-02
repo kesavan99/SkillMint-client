@@ -198,7 +198,7 @@ export const en = {
     // Toggles
     alreadyHaveAccount: 'Already have an account?',
     backToUserLogin: '← Back to User Login',
-    adminLoginLink: '🔐 Admin Login',
+    adminLoginLink: 'Admin Login',
     
     // Success Messages
     emailVerifiedSuccess: 'Email verified successfully! You can now login.',
@@ -342,8 +342,8 @@ export const en = {
     remove: 'Remove',
     
     // Action Buttons
-    showAIAnalysis: '🤖 Show AI Analysis',
-    hideAIAnalysis: '🤖 Hide AI Analysis',
+    showAIAnalysis: 'Show AI Analysis',
+    hideAIAnalysis: 'Hide AI Analysis',
     previewResume: '👁️ Preview Resume',
     
     // AI Analysis Sidebar
@@ -395,7 +395,7 @@ export const en = {
 
   // Job Search
   jobSearch: {
-    title: '🔍 Job Search',
+    title: 'Job Search',
     subtitle: 'Find your dream job by entering your preferences',
     
     // Form Labels
@@ -422,7 +422,7 @@ export const en = {
     freelance: 'Freelance',
     
     // Buttons
-    remoteButton: '🏠 Remote',
+    remoteButton: 'Remote',
     searchJobs: 'Search Jobs',
     searching: 'Searching...',
     reset: 'Reset',
@@ -651,6 +651,14 @@ export const en = {
     logout: 'Logout',
     toggleMenu: 'Toggle menu',
     logoAlt: 'SkillMint Logo',
+  },
+
+  // Login Prompt
+  loginPrompt: {
+    title: 'Login Required',
+    message: 'You need to login to access this feature. Please sign in to continue.',
+    loginButton: 'Go to Login',
+    backButton: 'Back to Home',
   },
 
   // Privacy Policy

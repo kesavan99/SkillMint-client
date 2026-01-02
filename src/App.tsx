@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, cloneElement } from 'react';
 import Login from './component/Login';
+import LoginPrompt from './component/LoginPrompt';
 import Home from './component/Home';
 import Profile from './component/Profile';
 import AdminHome from './component/AdminHome';
@@ -28,7 +29,17 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
   const { isAuthenticated, isLoading } = useAuth();
   // While checking auth status, don't redirect — avoid flicker.
   if (isLoading) return null;
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  
+  if (!isAuthenticated) {
+    return (
+      <>
+        {cloneElement(children, { isPreviewMode: true } as any)}
+        <LoginPrompt />
+      </>
+    );
+  }
+  
+  return children;
 };
 
 // Auth Route wrapper (redirects to / if already logged in)
