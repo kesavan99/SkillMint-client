@@ -402,13 +402,14 @@ const JobSearch: React.FC = () => {
         setIsSearching(false);
         setError('Failed to retrieve job search results');
       }
-    }, 2000); // Poll every 2 seconds
+    }, 3000); // Poll every 3 seconds (reduced server load)
 
-    // Timeout after 2 minutes
+    // Timeout after 5 minutes (extended for Render.com cold starts)
     setTimeout(() => {
       clearInterval(pollInterval);
       setIsSearching(false);
-    }, 120000);
+      setError('Job search timed out. Please try again.');
+    }, 300000);
   };
 
   const handleReset = () => {
