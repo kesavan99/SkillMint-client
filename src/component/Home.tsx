@@ -125,6 +125,126 @@ const Home: React.FC = () => {
         </div>
         )}
 
+        {/* Job Search Feature Section - Visible to All */}
+        <div className="px-5 py-16 mt-20 -mx-5 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-12 text-center">
+              <div className="flex justify-center mb-6">
+                <img src="/job-portal-search.png" alt="Job Search" className="w-20 h-20 md:w-24 md:h-24" />
+              </div>
+              <h2 className="mb-4 text-3xl font-bold text-white md:text-4xl">Smart Job Search with ATS Scoring</h2>
+              <p className="max-w-3xl mx-auto text-lg text-white/90 md:text-xl">
+                Discover your perfect job match with our intelligent job search engine
+              </p>
+            </div>
+
+            {/* Feature Highlights */}
+            <div className="grid grid-cols-1 gap-6 mb-12 md:grid-cols-2 lg:grid-cols-4">
+              <div className="p-6 transition-all duration-300 border-2 bg-white/10 backdrop-blur-sm border-white/20 rounded-xl hover:bg-white/20 hover:border-white/40">
+                <div className="flex justify-center mb-4">
+                  <div className="flex items-center justify-center w-14 h-14 p-2 bg-white rounded-xl">
+                    <img src="/cv.png" alt="Resume-Based Search" className="object-contain w-full h-full" />
+                  </div>
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-center text-white">Resume-Based Search</h3>
+                <p className="text-sm text-center text-white/80">Search jobs that match your resume profile and skills automatically</p>
+              </div>
+
+              <div className="p-6 transition-all duration-300 border-2 bg-white/10 backdrop-blur-sm border-white/20 rounded-xl hover:bg-white/20 hover:border-white/40">
+                <div className="flex justify-center mb-4">
+                  <div className="flex items-center justify-center w-14 h-14 p-2 bg-white rounded-xl">
+                    <img src="/target.png" alt="ATS Score Matching" className="object-contain w-full h-full" />
+                  </div>
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-center text-white">ATS Score Matching</h3>
+                <p className="text-sm text-center text-white/80">See real-time ATS compatibility scores for each job posting</p>
+              </div>
+
+              <div className="p-6 transition-all duration-300 border-2 bg-white/10 backdrop-blur-sm border-white/20 rounded-xl hover:bg-white/20 hover:border-white/40">
+                <div className="flex justify-center mb-4">
+                  <div className="flex items-center justify-center w-14 h-14 p-2 bg-white rounded-xl">
+                    <img src="/testing.png" alt="Customizable ATS Weights" className="object-contain w-full h-full" />
+                  </div>
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-center text-white">Customizable ATS Weights</h3>
+                <p className="text-sm text-center text-white/80">Adjust scoring criteria based on your priorities - skills, experience, projects & more</p>
+              </div>
+
+              <div className="p-6 transition-all duration-300 border-2 bg-white/10 backdrop-blur-sm border-white/20 rounded-xl hover:bg-white/20 hover:border-white/40">
+                <div className="flex justify-center mb-4">
+                  <div className="flex items-center justify-center w-14 h-14 p-2 bg-white rounded-xl">
+                    <img src="/job-search.png" alt="Easy Apply" className="object-contain w-full h-full" />
+                  </div>
+                </div>
+                <h3 className="mb-2 text-lg font-semibold text-center text-white">Easy Apply</h3>
+                <p className="text-sm text-center text-white/80">Apply to jobs directly with one click - no complicated forms</p>
+              </div>
+            </div>
+
+            {/* Job Platforms */}
+            <div className="p-8 border-2 bg-white/10 backdrop-blur-md border-white/20 rounded-2xl">
+              <h3 className="mb-6 text-xl font-semibold text-center text-white md:text-2xl">Search Across Top Job Platforms</h3>
+              <div className="flex flex-wrap items-center justify-center gap-8 mb-8">
+                <div className="flex flex-col items-center gap-2 transition-transform duration-300 hover:scale-110">
+                  <div className="flex items-center justify-center w-20 h-20 p-3 bg-white shadow-lg rounded-xl">
+                    <img src="/linkedin.png" alt="LinkedIn" className="object-contain w-full h-full" />
+                  </div>
+                  <span className="text-sm font-medium text-white">LinkedIn</span>
+                </div>
+                <div className="flex flex-col items-center gap-2 transition-transform duration-300 hover:scale-110">
+                  <div className="flex items-center justify-center w-20 h-20 p-3 bg-white shadow-lg rounded-xl">
+                    <img src="/indeed.png" alt="Indeed" className="object-contain w-full h-full" />
+                  </div>
+                  <span className="text-sm font-medium text-white">Indeed</span>
+                </div>
+                <div className="flex flex-col items-center gap-2 transition-transform duration-300 hover:scale-110">
+                  <div className="flex items-center justify-center w-20 h-20 p-3 bg-white shadow-lg rounded-xl">
+                    <img src="/glassdoor.png" alt="Glassdoor" className="object-contain w-full h-full" />
+                  </div>
+                  <span className="text-sm font-medium text-white">Glassdoor</span>
+                </div>
+                <div className="flex flex-col items-center gap-2 transition-transform duration-300 hover:scale-110">
+                  <div className="flex items-center justify-center w-20 h-20 p-3 bg-white shadow-lg rounded-xl">
+                    <img src="/naukari.png" alt="Naukri" className="object-contain w-full h-full" />
+                  </div>
+                  <span className="text-sm font-medium text-white">Naukri</span>
+                </div>
+              </div>
+
+              {/* Detailed Description */}
+              <div className="p-6 mx-auto max-w-4xl bg-white/20 backdrop-blur-sm rounded-xl">
+                <p className="mb-4 text-base leading-relaxed text-center text-white md:text-lg">
+                  <span className="font-semibold">You can search jobs based on your resume</span> and apply easily with just one click. 
+                  Our advanced system provides <span className="font-semibold">ATS score matching</span> for each job posting, showing you 
+                  exactly how well your profile matches the job requirements.
+                </p>
+                <p className="mb-4 text-base leading-relaxed text-center text-white md:text-lg">
+                  What makes it unique? <span className="font-semibold">You can also customize the ATS score calculation</span> by adjusting 
+                  weights for different factors like skills (35%), experience (30%), projects (15%), keywords (10%), summary (5%), and 
+                  education (5%). Tailor the scoring to what matters most for your career goals!
+                </p>
+                <div className="flex justify-center mt-6">
+                  {isAuthenticated ? (
+                    <button
+                      onClick={() => navigate('/job-search')}
+                      className="px-8 py-3 text-lg font-semibold text-purple-600 transition-all duration-300 bg-white rounded-lg shadow-lg hover:bg-gray-100 hover:shadow-xl hover:scale-105"
+                    >
+                      Start Job Search →
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => navigate('/login')}
+                      className="px-8 py-3 text-lg font-semibold text-purple-600 transition-all duration-300 bg-white rounded-lg shadow-lg hover:bg-gray-100 hover:shadow-xl hover:scale-105"
+                    >
+                      Sign Up to Start Searching →
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="px-5 py-16 mt-20 -mx-5 bg-gradient-to-r from-purple-100 via-blue-50 to-green-100">
           <div className="mx-auto max-w-7xl">
             <h2 className="mb-12 text-2xl font-bold text-center text-gray-900 md:text-3xl">Why Choose SkillMint?</h2>

@@ -88,7 +88,7 @@ const GooglePasswordSetup: React.FC = () => {
           <div className="flex justify-center mb-4">
             <img src="/logo.png" alt="SkillMint Logo" className="h-12" style={{ width: 'auto' }} />
           </div>
-          <h2 className="text-3xl font-bold mb-2" style={{ color: '#19B86B' }}>
+          <h2 className="mb-2 text-3xl font-bold" style={{ color: '#19B86B' }}>
             Complete Your Profile
           </h2>
           <p className="text-gray-600">
@@ -104,7 +104,7 @@ const GooglePasswordSetup: React.FC = () => {
           )}
           
           <div className="flex flex-col gap-2">
-            <label htmlFor="email" className="text-gray-700 font-medium">
+            <label htmlFor="email" className="font-medium text-gray-700">
               Email
             </label>
             <input
@@ -112,12 +112,12 @@ const GooglePasswordSetup: React.FC = () => {
               id="email"
               value={email}
               disabled
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none bg-gray-50"
+              className="px-4 py-3 text-black bg-white border border-gray-300 rounded-lg focus:outline-none"
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="password" className="text-gray-700 font-medium">
+            <label htmlFor="password" className="font-medium text-gray-700">
               Password
             </label>
             <input
@@ -126,13 +126,13 @@ const GooglePasswordSetup: React.FC = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-black"
+              className="px-4 py-3 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
           </div>
 
           <div className="flex flex-col gap-2">
-            <label htmlFor="confirmPassword" className="text-gray-700 font-medium">
+            <label htmlFor="confirmPassword" className="font-medium text-gray-700">
               Confirm Password
             </label>
             <input
@@ -141,7 +141,7 @@ const GooglePasswordSetup: React.FC = () => {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm your password"
-              className="px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-white text-black"
+              className="px-4 py-3 text-black bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
           </div>
@@ -149,13 +149,13 @@ const GooglePasswordSetup: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full btn-primary py-3 rounded-lg transition-all disabled:opacity-50"
+            className="w-full py-3 transition-all rounded-lg btn-primary disabled:opacity-50"
           >
             {loading ? 'Setting Password...' : 'Continue'}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-sm text-gray-600">
+        <div className="mt-6 text-sm text-center text-gray-600">
           <p>
             This password will be used along with your email to sign in to your account.
           </p>

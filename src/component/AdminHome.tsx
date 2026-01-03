@@ -21,6 +21,17 @@ interface User {
   areaOfInterest: string;
 }
 
+interface ExtensionRequest {
+  id: string;
+  email: string;
+  name: string;
+  currentLimit: number;
+  requested: boolean;
+  requestedAt: string;
+  message: string;
+  status: 'pending' | 'approved' | 'rejected';
+}
+
 const AdminHome: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -29,9 +40,13 @@ const AdminHome: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState<'users' | 'extensions'>('users');
+  const [extensionRequests, setExtensionRequests] = useState<ExtensionRequest[]>([]);
+  const [loadingExtensions, setLoadingExtensions] = useState(false);
 
   useEffect(() => {
     fetchAllUsers();
+    fetchExtensionRequests();
   }, []);
 
   const fetchAllUsers = async () => {
@@ -61,6 +76,79 @@ const AdminHome: React.FC = () => {
       setError(err.message || t('admin.failedToLoad'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchExtensionRequests = async () => {
+    try {
+      setLoadingExtensions(true);
+      const response = await fetch(`${API_URL}/skill-mint/admin/job-search-extension-requests`, {
+        method: 'GET',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch extension requests');
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        setExtensionRequests(data.data.requests);
+      }
+    } catch (err: any) {
+      console.error('Error fetching extension requests:', err);
+    } finally {
+      setLoadingExtensions(false);
+    }
+  };
+
+  const handleApproveRequest = async (userId: string) => {
+    try {
+      const response = await fetch(`${API_URL}/skill-mint/admin/job-search-limit/${userId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          newLimit: 3,
+          requestStatus: 'approved'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to approve request');
+      }
+
+      alert('Request approved! User limit reset to 3.');
+      fetchExtensionRequests();
+    } catch (err: any) {
+      alert(err.message || 'Failed to approve request');
+    }
+  };
+
+  const handleRejectRequest = async (userId: string) => {
+    try {
+      const response = await fetch(`${API_URL}/skill-mint/admin/job-search-limit/${userId}`, {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          requestStatus: 'rejected'
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reject request');
+      }
+
+      alert('Request rejected.');
+      fetchExtensionRequests();
+    } catch (err: any) {
+      alert(err.message || 'Failed to reject request');
     }
   };
 
@@ -131,6 +219,18 @@ const AdminHome: React.FC = () => {
           <div className="p-6 bg-white rounded-lg shadow-md">
             <div className="flex items-center justify-between">
               <div>
+                <p className="text-sm font-medium text-gray-600">Extension Requests</p>
+                <p className="text-3xl font-bold text-amber-600">{extensionRequests.filter(r => r.status === 'pending').length}</p>
+              </div>
+              <div className="p-3 rounded-full bg-amber-100">
+                <span className="text-3xl">📨</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6 bg-white rounded-lg shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
                 <p className="text-sm font-medium text-gray-600">{t('admin.activeUsers')}</p>
                 <p className="text-3xl font-bold text-green-600">
                   {users.filter(u => u.isActive).length}
@@ -161,19 +261,48 @@ const AdminHome: React.FC = () => {
           </div>
         </div>
 
-        {/* Search */}
+        {/* Tabs */}
         <div className="mb-6">
-          <input
-            type="text"
-            placeholder={t('admin.searchPlaceholder')}
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-4 py-3 bg-white text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-          />
+          <div className="flex gap-4 border-b border-gray-200">
+            <button
+              onClick={() => setActiveTab('users')}
+              className={`px-6 py-3 font-semibold transition-all ${
+                activeTab === 'users'
+                  ? 'text-primary-600 border-b-2 border-primary-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              👥 All Users ({totalUsers})
+            </button>
+            <button
+              onClick={() => setActiveTab('extensions')}
+              className={`px-6 py-3 font-semibold transition-all ${
+                activeTab === 'extensions'
+                  ? 'text-primary-600 border-b-2 border-primary-600'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              📨 Extension Requests ({extensionRequests.filter(r => r.status === 'pending').length})
+            </button>
+          </div>
         </div>
 
+        {/* Search */}
+        {activeTab === 'users' && (
+          <div className="mb-6">
+            <input
+              type="text"
+              placeholder={t('admin.searchPlaceholder')}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-3 bg-white text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+          </div>
+        )}
+
         {/* Users Table */}
-        <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+        {activeTab === 'users' && (
+          <div className="overflow-x-auto bg-white rounded-lg shadow-md">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
@@ -254,6 +383,104 @@ const AdminHome: React.FC = () => {
             </tbody>
           </table>
         </div>
+        )}
+
+        {/* Extension Requests Table */}
+        {activeTab === 'extensions' && (
+          <div className="overflow-x-auto bg-white rounded-lg shadow-md">
+            {loadingExtensions ? (
+              <div className="p-12 text-center">
+                <div className="w-16 h-16 mx-auto mb-4 border-b-2 rounded-full animate-spin border-primary-600"></div>
+                <p className="text-lg text-gray-600">Loading requests...</p>
+              </div>
+            ) : extensionRequests.length === 0 ? (
+              <div className="p-12 text-center">
+                <p className="text-lg text-gray-600">No extension requests found</p>
+              </div>
+            ) : (
+              <table className="w-full">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Email</th>
+                    <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Name</th>
+                    <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Current Limit</th>
+                    <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Requested</th>
+                    <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Requested At</th>
+                    <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Message</th>
+                    <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Status</th>
+                    <th className="px-6 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {extensionRequests.map((request) => (
+                    <tr key={request.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium text-gray-900 whitespace-nowrap">
+                        {request.email}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                        {request.name}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          request.currentLimit === 0 ? 'bg-red-100 text-red-800' :
+                          request.currentLimit <= 1 ? 'bg-amber-100 text-amber-800' :
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {request.currentLimit} / 3
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
+                        {request.requested ? (
+                          <span className="px-2 py-1 text-xs font-semibold text-green-800 bg-green-100 rounded-full">✓ Yes</span>
+                        ) : (
+                          <span className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 rounded-full">✗ No</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                        {formatDate(request.requestedAt)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-700 max-w-xs">
+                        <div className="truncate" title={request.message}>
+                          {request.message}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                          request.status === 'pending' ? 'bg-amber-100 text-amber-800' :
+                          request.status === 'approved' ? 'bg-green-100 text-green-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm whitespace-nowrap">
+                        {request.status === 'pending' && (
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => handleApproveRequest(request.id)}
+                              className="px-3 py-1 text-xs font-semibold text-white transition-all bg-green-600 rounded hover:bg-green-700"
+                            >
+                              ✓ Approve
+                            </button>
+                            <button
+                              onClick={() => handleRejectRequest(request.id)}
+                              className="px-3 py-1 text-xs font-semibold text-white transition-all bg-red-600 rounded hover:bg-red-700"
+                            >
+                              ✗ Reject
+                            </button>
+                          </div>
+                        )}
+                        {request.status !== 'pending' && (
+                          <span className="text-xs text-gray-500">-</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        )}
       </main>
     </div>
   );

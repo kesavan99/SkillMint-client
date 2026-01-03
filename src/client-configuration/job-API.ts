@@ -18,6 +18,8 @@ export const jobSearchAPI = {
     location?: string;
     jobType?: string;
     resumeId?: string;
+    company?: string;
+    platform?: string;
     atsWeights?: {
       skills: number;
       experience: number;
@@ -104,6 +106,27 @@ export const jobSearchAPI = {
       return await response.json();
     } catch (error: any) {
       console.error('Job service health check error:', error);
+      throw error;
+    }
+  },
+
+  /**
+   * Get user's remaining job search quota
+   */
+  getUserQuota: async () => {
+    try {
+      const response = await authenticatedFetch(`${API_BASE}/quota`, {
+        method: 'GET'
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to get user quota');
+      }
+
+      return await response.json();
+    } catch (error: any) {
+      console.error('Get user quota API error:', error);
       throw error;
     }
   }

@@ -156,6 +156,13 @@ export const loginUser = async (credentials: LoginCredentials): Promise<AuthResp
     });
     const data = await response.json();
 
+    if (response.status === 429) {
+      return { 
+        success: false, 
+        message: 'Multiple login attempts detected. Your account has been temporarily frozen for security reasons. Please try again after 5 minutes.' 
+      };
+    }
+
     if (!response.ok) return { success: false, message: data.message || 'Login failed' };
 
     return { success: true, data, token: data.token };

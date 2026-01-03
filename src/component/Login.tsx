@@ -57,7 +57,7 @@ const Login = () => {
       const data = await response.json();
 
       if (response.status === 429) {
-        setError(t('auth.tooManyRequests'));
+        setError('Multiple login attempts detected. Your account has been temporarily frozen for security reasons. Please try again after 5 minutes.');
         return;
       }
 
@@ -116,6 +116,11 @@ const Login = () => {
 
       const data = await response.json();
 
+      if (response.status === 429) {
+        setError('Multiple login attempts detected. Your account has been temporarily frozen for security reasons. Please try again after 5 minutes.');
+        return;
+      }
+
       if (response.ok && data.status === 'success') {
         // Admin authenticated - redirect to admin home page
         window.location.href = '/admin-home';
@@ -171,6 +176,13 @@ const Login = () => {
 
         const data = await response.json();
 
+        if (response.status === 429) {
+          setError('Multiple signup attempts detected. Your request has been temporarily blocked for security reasons. Please try again after 5 minutes.');
+          setLoading(false);
+          setIsSubmitting(false);
+          return;
+        }
+
         if (response.ok && data.status === 'success') {
           
           // Get verification token from response
@@ -208,18 +220,38 @@ const Login = () => {
     } else {
       // Handle login
       setLoading(true);
+      setIsSubmitting(true);
       try {
-        const success = await login(email, password);
+        const response = await fetch(`${BASE_URL}/skill-mint/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ 
+            email, 
+            password,
+            newOne: false 
+          })
+        });
 
-        if (success) {
-          navigate('/');
+        const data = await response.json();
+
+        if (response.status === 429) {
+          setError('Multiple login attempts detected. Your account has been temporarily frozen for security reasons. Please try again after 5 minutes.');
+          return;
+        }
+
+        if (response.ok && data.status === 'success') {
+          // Store authentication data
+          localStorage.setItem('userEmail', email);
+          window.location.href = '/';
         } else {
-          setError(t('auth.loginFailedCredentials'));
+          setError(data.message || t('auth.loginFailedCredentials'));
         }
       } catch (err) {
         setError(t('auth.unexpectedLoginError'));
       } finally {
         setLoading(false);
+        setIsSubmitting(false);
       }
     }
   };
@@ -392,8 +424,8 @@ const Login = () => {
           )}
           
           {error && (
-            <div className={error.includes('rate limit') || error.includes('Too many requests') ? 'banner-rate-limit' : 'banner-error'}>
-              {(error.includes('rate limit') || error.includes('Too many requests')) && (
+            <div className={error.includes('frozen for security') || error.includes('temporarily blocked') || error.includes('rate limit') || error.includes('Too many') ? 'banner-rate-limit' : 'banner-error'}>
+              {(error.includes('frozen for security') || error.includes('temporarily blocked') || error.includes('rate limit') || error.includes('Too many')) && (
                 <div className="flex-shrink-0">
                   <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -402,9 +434,9 @@ const Login = () => {
               )}
               <div className="flex-1">
                 <div className="text-sm leading-relaxed sm:text-base">{error}</div>
-                {(error.includes('rate limit') || error.includes('Too many requests')) && (
+                {(error.includes('frozen for security') || error.includes('temporarily blocked') || error.includes('rate limit') || error.includes('Too many')) && (
                   <div className="mt-2 text-xs sm:text-sm opacity-90">
-                    {t('auth.rateLimitHelp')}
+                    ⏱️ Please wait 5 minutes before attempting to login again.
                   </div>
                 )}
               </div>

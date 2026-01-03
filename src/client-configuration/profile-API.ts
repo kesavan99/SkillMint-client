@@ -43,3 +43,21 @@ export const updateProfile = async (data: ProfileUpdateData) => {
     throw new Error(error.message || 'Failed to update profile');
   }
 };
+
+export const requestJobSearchLimitExtension = async (message: string) => {
+  try {
+    const response = await authenticatedFetch(`${BASE_URL}/skill-mint/user/request-job-search-extension`, {
+      method: 'POST',
+      body: JSON.stringify({ message })
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to submit request');
+    }
+    
+    return await response.json();
+  } catch (error: any) {
+    throw new Error(error.message || 'Failed to submit request');
+  }
+};

@@ -35,6 +35,12 @@ const ForgotPassword: React.FC = () => {
 
       const data = await response.json();
 
+      if (response.status === 429) {
+        setError('Multiple password reset attempts detected. Your request has been temporarily blocked for security reasons. Please try again after 5 minutes.');
+        setLoading(false);
+        return;
+      }
+
       if (response.ok && data.status === 'success') {
         const resetToken = data.data.resetToken;
         
