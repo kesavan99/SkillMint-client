@@ -9,7 +9,6 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { login } = useAuth();
   const { t } = useTranslation();
   const [isSignUp, setIsSignUp] = useState(false);
   const [name, setName] = useState('');
