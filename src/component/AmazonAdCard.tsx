@@ -2,10 +2,9 @@ import type { AmazonProduct } from '../constants/amazonProducts';
 
 interface AmazonAdCardProps {
   product: AmazonProduct;
-  position?: 'left' | 'right';
 }
 
-const AmazonAdCard = ({ product, position = 'left' }: AmazonAdCardProps) => {
+const AmazonAdCard = ({ product }: AmazonAdCardProps) => {
   return (
     <div className="sticky top-24">
       <div className="overflow-hidden transition-all duration-300 bg-white border-2 border-orange-200 shadow-lg rounded-xl hover:shadow-xl hover:border-orange-300">
