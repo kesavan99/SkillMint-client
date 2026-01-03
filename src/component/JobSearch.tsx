@@ -553,7 +553,7 @@ const JobSearch: React.FC = () => {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           {/* Left Amazon Ad - Desktop only */}
           <aside className="hidden lg:block lg:col-span-2">
-            <AmazonAdCard product={getProductsForPage('jobsearch')[0]} position="left" />
+            <AmazonAdCard product={getProductsForPage('jobsearch')[0]} />
           </aside>
 
           {/* Main Content Area */}
@@ -1531,7 +1531,7 @@ const JobSearch: React.FC = () => {
 
           {/* Right Amazon Ad - Desktop only */}
           <aside className="hidden lg:block lg:col-span-2">
-            <AmazonAdCard product={getProductsForPage('jobsearch')[1]} position="right" />
+            <AmazonAdCard product={getProductsForPage('jobsearch')[1]} />
           </aside>
         </div>
 

@@ -33,7 +33,7 @@ const DynamicResumeBuilder: React.FC = () => {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
           {/* Left Amazon Ad - Desktop only */}
           <aside className="hidden lg:block lg:col-span-2">
-            <AmazonAdCard product={getProductsForPage('resume')[0]} position="left" />
+            <AmazonAdCard product={getProductsForPage('resume')[0]} />
           </aside>
 
           {/* Main Content */}
@@ -115,7 +115,7 @@ const DynamicResumeBuilder: React.FC = () => {
 
           {/* Right Amazon Ad - Desktop only */}
           <aside className="hidden lg:block lg:col-span-2">
-            <AmazonAdCard product={getProductsForPage('resume')[1]} position="right" />
+            <AmazonAdCard product={getProductsForPage('resume')[1]} />
           </aside>
         </div>
 
