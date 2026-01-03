@@ -1,6 +1,5 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useAuth } from '../service/authService';
 import { signInWithGooglePopup, createUserWithEmail } from '../service/firebaseAuthService';
 import { useTranslation } from '../locales';
 
