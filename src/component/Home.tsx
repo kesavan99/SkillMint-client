@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
 import { useAuth } from '../service/authService';
+import AmazonAdCard from './AmazonAdCard';
+import { getProductsForPage } from '../constants/amazonProducts';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -17,6 +19,14 @@ const Home: React.FC = () => {
       <Navbar />
 
       <main className="px-5 py-16 mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          {/* Left Ad - Hidden on mobile, visible on desktop */}
+          <aside className="hidden lg:block lg:col-span-2">
+            <AmazonAdCard product={getProductsForPage('home')[0]} position="left" />
+          </aside>
+
+          {/* Main Content */}
+          <div className="lg:col-span-8">
         {!isAuthenticated ? (
           <div className="max-w-4xl mx-auto text-center">
             <h1 className="mb-6 text-4xl font-bold text-gray-900 md:text-5xl lg:text-6xl">
@@ -294,6 +304,20 @@ const Home: React.FC = () => {
           </div>
         </div>
       
+          </div>
+
+          {/* Right Ad - Desktop only */}
+          <aside className="hidden lg:block lg:col-span-2">
+            <AmazonAdCard product={getProductsForPage('home')[1]} position="right" />
+          </aside>
+        </div>
+
+        {/* Mobile Ads - Bottom on mobile */}
+        <div className="grid grid-cols-1 gap-4 mt-8 sm:grid-cols-2 lg:hidden">
+          <AmazonAdCard product={getProductsForPage('home')[0]} />
+          <AmazonAdCard product={getProductsForPage('home')[1]} />
+        </div>
+
         <footer className="pt-10 pb-6 mt-20 border-t border-white/20">
           <div className="grid grid-cols-1 gap-8 mx-auto max-w-7xl md:grid-cols-3">
             <div>

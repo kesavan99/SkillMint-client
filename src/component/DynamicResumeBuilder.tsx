@@ -3,6 +3,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Navbar from './Navbar';
 import OptimizedImage from './OptimizedImage';
 import { useTranslation } from '../locales';
+import AmazonAdCard from './AmazonAdCard';
+import { getProductsForPage } from '../constants/amazonProducts';
 
 const DynamicResumeBuilder: React.FC = () => {
   const navigate = useNavigate();
@@ -28,6 +30,14 @@ const DynamicResumeBuilder: React.FC = () => {
       <Navbar />
       
       <main className="px-5 py-16 mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          {/* Left Amazon Ad - Desktop only */}
+          <aside className="hidden lg:block lg:col-span-2">
+            <AmazonAdCard product={getProductsForPage('resume')[0]} position="left" />
+          </aside>
+
+          {/* Main Content */}
+          <div className="lg:col-span-8">
         <div className="max-w-4xl mx-auto">
           {/* Heading Section */}
           <div className="mb-12 text-center">
@@ -100,6 +110,19 @@ const DynamicResumeBuilder: React.FC = () => {
               {t('dynamicBuilder.backToHome')}
             </button>
           </div>
+        </div>
+          </div>
+
+          {/* Right Amazon Ad - Desktop only */}
+          <aside className="hidden lg:block lg:col-span-2">
+            <AmazonAdCard product={getProductsForPage('resume')[1]} position="right" />
+          </aside>
+        </div>
+
+        {/* Mobile Ads - Bottom on mobile */}
+        <div className="grid grid-cols-1 gap-4 mt-8 sm:grid-cols-2 lg:hidden">
+          <AmazonAdCard product={getProductsForPage('resume')[0]} />
+          <AmazonAdCard product={getProductsForPage('resume')[1]} />
         </div>
       </main>
     </div>
